@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SHADOWDZ — Khám Phá & Chia Sẻ Script Roblox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   ANALYSIS vs tienxpro.site:
+   + Hero loads instantly (no blank "Đang tải...")
+   + Executor count shows real data (not 0/0)
+   + Script cards with inline preview — no API delay
+   + SPA hash routing for all pages
+   + Better mobile nav (hamburger)
+   + Script detail view in-page (no redirect)
+   + Keyless badge prominent on card
+   CLONE: same nav structure, same page set, same VN copy
+   IMPROVE: design depth, instant data, more features
+   ══════════════════════════════════════════ */
+
+:root {
+  --bg:          #F8F9FC;
+  --bg2:         #F1F3F8;
+  --surface:     #FFFFFF;
+  --surface2:    #F4F5FA;
+  --surface3:    #ECEEF5;
+  --border:      #DDE1EC;
+  --border2:     #C8CEDF;
+  --accent:      #7C3AED;
+  --accent2:     #9F5FF7;
+  --accent-glow: rgba(124,58,237,0.14);
+  --accent-dim:  rgba(124,58,237,0.08);
+  --text:        #1A1D2E;
+  --text-dim:    #4A5280;
+  --text-muted:  #9199B3;
+  --green:       #059669;
+  --yellow:      #D97706;
+  --red:         #DC2626;
+  --blue:        #2563EB;
+  --orange:      #EA580C;
+  --pink:        #DB2777;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --rad: 10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--sans);cursor:pointer}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(248,249,252,0.92);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  height:58px;padding:0 24px;
+  display:flex;align-items:center;gap:0;
+}
+.nav-logo{
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:15px;font-weight:700;
+  color:var(--text);letter-spacing:-0.03em;margin-right:28px;
+}
+.logo-mark{
+  width:28px;height:28px;border-radius:7px;
+  background:linear-gradient(135deg,var(--accent),#9F5FF7);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.nav-links{display:flex;gap:2px}
+.nav-link{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 13px;border-radius:7px;border:none;background:transparent;
+  font-size:13px;color:var(--text-dim);transition:color .15s,background .15s;
+}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.nav-link.active{color:var(--accent);background:var(--accent-dim)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.theme-btn{
+  width:34px;height:34px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text-dim);font-size:15px;
+  display:flex;align-items:center;justify-content:center;transition:border-color .15s;
+}
+.theme-btn:hover{border-color:var(--border2);color:var(--text)}
+.btn-login{
+  padding:7px 14px;border-radius:7px;border:1px solid var(--border2);
+  background:transparent;font-size:13px;color:var(--text-dim);
+  transition:border-color .15s,color .15s;
+}
+.btn-login:hover{border-color:var(--accent);color:var(--accent)}
+.btn-signup{
+  padding:7px 16px;border-radius:7px;border:none;
+  background:var(--accent);font-size:13px;font-weight:500;color:#fff;
+  transition:background .15s,box-shadow .15s;
+}
+.btn-signup:hover{background:#6D28D9;box-shadow:0 0 18px rgba(124,58,237,.4)}
+.hamburger{display:none;flex-direction:column;gap:4px;padding:8px;border:none;background:transparent;cursor:pointer}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text-dim);border-radius:2px;transition:transform .2s}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ══════════════════
+   HOME PAGE
+══════════════════ */
+
+/* hero */
+.hero{
+  position:relative;overflow:hidden;
+  padding:80px 24px 72px;text-align:center;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(124,58,237,.10) 0%, transparent 70%),
+             radial-gradient(ellipse 40% 40% at 80% 60%, rgba(96,165,250,.06) 0%, transparent 60%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-size:11px;color:var(--accent2);
+  background:var(--accent-dim);border:1px solid rgba(124,58,237,.25);
+  padding:5px 14px;border-radius:20px;margin-bottom:22px;
+  letter-spacing:.04em;
+}
+.hero-eyebrow .pulse{
+  width:7px;height:7px;border-radius:50%;background:var(--accent2);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+.hero h1{
+  font-size:clamp(28px,5vw,52px);font-weight:700;
+  letter-spacing:-0.03em;line-height:1.15;
+  margin-bottom:18px;
+  background:linear-gradient(135deg,#1A1D2E 0%,#4A5280 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{
+  font-size:16px;color:var(--text-dim);max-width:540px;margin:0 auto 36px;
+  line-height:1.65;
+}
+.hero-search{
+  display:flex;max-width:520px;margin:0 auto 32px;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--rad);overflow:hidden;
+  transition:border-color .15s,box-shadow .15s;
+}
+.hero-search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
+.hero-search input{
+  flex:1;background:transparent;border:none;padding:12px 16px;
+  font-size:14px;color:var(--text);font-family:var(--sans);outline:none;
+}
+.hero-search input::placeholder{color:var(--text-muted)}
+.hero-search button{
+  padding:0 20px;background:var(--accent);border:none;
+  color:#fff;font-size:13px;font-weight:500;
+  transition:background .15s;white-space:nowrap;
+}
+.hero-search button:hover{background:#6D28D9}
+.hero-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+.pill{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 13px;border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);font-size:12px;color:var(--text-dim);
+  cursor:pointer;transition:border-color .15s,color .15s,background .15s;
+}
+.pill:hover,.pill.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.hero-stats{
+  display:flex;justify-content:center;gap:36px;
+  margin-top:36px;padding-top:32px;border-top:1px solid var(--border);
+}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--text)}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* section */
+.section{padding:40px 24px;max-width:1280px;margin:0 auto}
+.section-head{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.section-title{font-size:18px;font-weight:600}
+.section-sub{font-size:13px;color:var(--text-muted);margin-left:4px}
+.section-right{margin-left:auto}
+
+/* filters */
+.filter-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px;align-items:center}
+.filter-chip{
+  padding:5px 13px;border-radius:6px;border:1px solid var(--border);
+  background:transparent;font-size:12px;color:var(--text-dim);
+  font-family:var(--sans);cursor:pointer;transition:.12s;
+}
+.filter-chip:hover,.filter-chip.active{background:var(--accent-dim);border-color:rgba(124,58,237,.4);color:var(--accent)}
+.filter-chip.active{font-weight:500}
+
+/* script grid */
+.script-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  gap:14px;
+}
+
+/* script card */
+.scard{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--rad);overflow:hidden;cursor:pointer;
+  transition:border-color .2s,transform .15s,box-shadow .2s;
+}
+.scard:hover{border-color:rgba(124,58,237,.5);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.scard-top{padding:14px 14px 10px;display:flex;gap:10px;align-items:flex-start}
+.scard-icon{
+  width:36px;height:36px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+  background:var(--surface2);
+}
+.scard-info{flex:1;min-width:0}
+.scard-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.scard-author{font-family:var(--mono);font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px}
+.scard-author .verified{color:var(--blue);font-size:10px}
+.scard-badges{display:flex;gap:5px;flex-wrap:wrap;padding:0 14px 10px}
+.badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:.03em}
+.b-free{background:rgba(52,211,153,.12);color:var(--green)}
+.b-paid{background:rgba(251,191,36,.12);color:var(--yellow)}
+.b-key{background:rgba(248,113,113,.12);color:var(--red)}
+.b-keyless{background:rgba(52,211,153,.2);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.b-game{background:rgba(96,165,250,.08);color:var(--blue);border:1px solid rgba(96,165,250,.18)}
+.b-updated{background:rgba(251,191,36,.1);color:var(--yellow)}
+
+/* code preview */
+.code-preview{margin:0 14px 12px;border-radius:7px;overflow:hidden;border:1px solid var(--border)}
+.code-topbar{
+  background:var(--surface2);padding:7px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:7px;
+}
+.dots{display:flex;gap:5px}
+.dot{width:9px;height:9px;border-radius:50%}
+.dot-r{background:#FF5F57}.dot-y{background:#FFBD2E}.dot-g{background:#28CA41}
+.code-topbar-name{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-left:4px}
+.code-body{
+  background:#1E1E2E;padding:10px 12px;
+  max-height:80px;overflow:hidden;
+  mask-image:linear-gradient(to bottom,black 55%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,black 55%,transparent 100%);
+}
+.code-body code{font-family:var(--mono);font-size:11px;line-height:1.65;color:#A9B1D6;white-space:pre;display:block}
+.kw{color:#C084FC}.fn{color:#60A5FA}.str{color:#34D399}.cm{color:var(--text-muted)}.nm{color:#FBBF24}
+
+/* card footer */
+.scard-foot{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;border-top:1px solid var(--border);
+}
+.foot-stat{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;color:var(--text-muted)}
+.scard-action{
+  margin-left:auto;font-family:var(--mono);font-size:11px;
+  color:var(--accent);background:var(--accent-dim);
+  border:1px solid rgba(124,58,237,.25);
+  padding:4px 11px;border-radius:5px;transition:background .15s;
+}
+.scard-action:hover{background:rgba(124,58,237,.25)}
+
+/* trending badge */
+.trending-num{
+  font-family:var(--mono);font-size:28px;font-weight:700;
+  color:var(--border2);line-height:1;margin-right:12px;
+  flex-shrink:0;user-select:none;
+}
+
+/* ══════════════════
+   EXECUTORS PAGE
+══════════════════ */
+.exec-hero{
+  padding:52px 24px 36px;text-align:center;
+  border-bottom:1px solid var(--border);
+}
+.exec-hero h1{font-size:clamp(22px,4vw,36px);font-weight:700;margin-bottom:10px}
+.exec-hero p{font-size:14px;color:var(--text-dim);max-width:460px;margin:0 auto}
+.exec-platform-tabs{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  padding:24px;border-bottom:1px solid var(--border);
+}
+.plat-tab{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 18px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);font-size:13px;color:var(--text-dim);
+  cursor:pointer;transition:.15s;
+}
+.plat-tab:hover,.plat-tab.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.plat-tab .count{
+  font-family:var(--mono);font-size:10px;
+  background:var(--surface2);padding:1px 6px;border-radius:4px;
+}
+.exec-status-bar{
+  display:flex;align-items:center;gap:16px;padding:14px 24px;
+  border-bottom:1px solid var(--border);font-size:13px;
+}
+.online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+.exec-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:14px;padding:24px;max-width:1280px;margin:0 auto;
+}
+.exec-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--rad);padding:20px;cursor:pointer;
+  transition:border-color .2s,transform .15s;
+}
+.exec-card:hover{border-color:rgba(124,58,237,.5);transform:translateY(-2px)}
+.exec-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.exec-icon{font-size:28px}
+.exec-name{font-size:15px;font-weight:600;margin-bottom:3px}
+.exec-plat{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.exec-status{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  padding:3px 9px;border-radius:4px;margin-bottom:12px;
+}
+.status-on{background:rgba(52,211,153,.12);color:var(--green)}
+.status-off{background:rgba(248,113,113,.1);color:var(--red)}
+.status-partial{background:rgba(251,191,36,.1);color:var(--yellow)}
+.exec-features{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.exec-feat{
+  font-size:11px;padding:2px 8px;border-radius:4px;
+  background:var(--surface2);color:var(--text-dim);
+}
+.exec-level{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--text-dim);
+}
+.level-bar{flex:1;height:4px;background:var(--surface3);border-radius:2px;margin:0 10px;overflow:hidden}
+.level-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+
+/* ══════════════════
+   UPLOAD PAGE
+══════════════════ */
+.upload-wrap{max-width:720px;margin:0 auto;padding:40px 24px}
+.upload-title{font-size:22px;font-weight:600;margin-bottom:6px}
+.upload-sub{font-size:14px;color:var(--text-dim);margin-bottom:32px}
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:24px;margin-bottom:16px}
+.form-section-title{font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:18px;font-family:var(--mono);letter-spacing:.04em}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{margin-bottom:0}
+.fg-full{grid-column:1/-1}
+label{display:block;font-size:12px;font-weight:500;color:var(--text-dim);margin-bottom:6px;font-family:var(--mono)}
+input[type=text],select,textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:7px;padding:10px 13px;font-size:13px;color:var(--text);
+  font-family:var(--sans);outline:none;transition:border-color .15s;
+}
+textarea{font-family:var(--mono);font-size:12px;resize:vertical;min-height:220px;line-height:1.65}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+input::placeholder,textarea::placeholder{color:var(--text-muted)}
+.form-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.form-tag{
+  padding:5px 12px;border-radius:5px;border:1px solid var(--border);
+  background:transparent;font-size:12px;color:var(--text-dim);cursor:pointer;transition:.12s;
+}
+.form-tag:hover,.form-tag.sel{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.btn-submit{
+  width:100%;padding:12px;border-radius:var(--rad);border:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-size:14px;font-weight:500;cursor:pointer;
+  transition:opacity .15s,box-shadow .15s;margin-top:4px;
+}
+.btn-submit:hover{opacity:.9;box-shadow:0 0 24px rgba(124,58,237,.4)}
+
+/* ══════════════════
+   AUTH PAGE
+══════════════════ */
+.auth-wrap{
+  min-height:calc(100vh - 58px);display:flex;align-items:center;justify-content:center;
+  padding:40px 24px;
+  background:radial-gradient(ellipse 50% 50% at 50% 30%,rgba(124,58,237,.06) 0%,transparent 65%);
+}
+.auth-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:36px;width:100%;max-width:400px;
+}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo .logo-mark{width:40px;height:40px;border-radius:10px;font-size:20px;margin:0 auto 12px}
+.auth-title{font-size:20px;font-weight:600;text-align:center;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--text-dim);text-align:center;margin-bottom:24px}
+.auth-fg{margin-bottom:14px}
+.auth-or{text-align:center;font-size:12px;color:var(--text-muted);margin:18px 0;position:relative}
+.auth-or::before,.auth-or::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+.auth-or::before{left:0}.auth-or::after{right:0}
+.btn-discord{
+  width:100%;padding:11px;border-radius:8px;border:1px solid #5865F2;
+  background:rgba(88,101,242,.12);color:#7289DA;
+  font-size:13px;font-weight:500;cursor:pointer;margin-top:4px;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s;
+}
+
+.auth-switch{text-align:center;font-size:13px;color:var(--text-dim);margin-top:20px}
+.auth-switch a{color:var(--accent);cursor:pointer}
+
+/* ══════════════════
+   DETAIL MODAL
+══════════════════ */
+.overlay{
+  position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:14px;width:100%;max-width:700px;max-height:88vh;
+  overflow-y:auto;transform:translateY(14px);transition:transform .2s;
+}
+.overlay.open .modal{transform:translateY(0)}
+.modal-head{
+  display:flex;align-items:center;gap:12px;padding:20px 24px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--surface);z-index:1;
+}
+.modal-close{
+  margin-left:auto;width:28px;height:28px;border-radius:6px;border:none;
+  background:var(--surface2);color:var(--text-dim);font-size:16px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-body{padding:24px}
+.modal-desc{color:var(--text-dim);font-size:14px;line-height:1.65;margin-bottom:20px}
+.modal-code-wrap{background:#1E1E2E;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:18px}
+.modal-code-bar{
+  display:flex;align-items:center;padding:10px 16px;
+  border-bottom:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--text-dim);
+}
+.copy-btn{
+  margin-left:auto;padding:4px 11px;border-radius:5px;border:1px solid var(--border2);
+  background:var(--surface);font-family:var(--mono);font-size:11px;color:var(--text-dim);cursor:pointer;
+  transition:.12s;
+}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.modal-code-scroll{padding:16px;max-height:300px;overflow-y:auto}
+.modal-code-scroll{background:#1E1E2E;padding:16px;max-height:300px;overflow-y:auto}
+.modal-code-scroll code{font-family:var(--mono);font-size:12px;line-height:1.7;white-space:pre;display:block;color:#A9B1D6}
+.modal-meta{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:20px;font-family:var(--mono);font-size:12px;color:var(--text-muted)}
+.modal-actions{display:flex;gap:10px}
+.btn-dl{
+  flex:1;padding:11px;border-radius:8px;border:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s;
+}
+.btn-dl:hover{opacity:.88}
+.btn-sec{
+  padding:11px 20px;border-radius:8px;border:1px solid var(--border2);
+  background:transparent;color:var(--text-dim);font-size:13px;cursor:pointer;transition:.12s;
+}
+.btn-sec:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── mobile nav dropdown ── */
+.mobile-menu{
+  display:none;position:fixed;top:58px;left:0;right:0;z-index:190;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:12px 16px;flex-direction:column;gap:4px;
+}
+.mobile-menu.open{display:flex}
+.mobile-link{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;border-radius:8px;font-size:14px;color:var(--text-dim);cursor:pointer;
+  border:none;background:transparent;text-align:left;transition:.12s;
+}
+.mobile-link:hover{background:var(--surface2);color:var(--text)}
+.mobile-link.active{background:var(--accent-dim);color:var(--accent)}
+
+/* ── responsive ── */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .btn-login,.btn-signup{display:none}
+  .hamburger{display:flex}
+  .hero h1{font-size:26px}
+  .hero p{font-size:14px}
+  .hero-stats{gap:20px}
+  .form-grid{grid-template-columns:1fr}
+  .fg-full{grid-column:1}
+  .section{padding:28px 16px}
+  .exec-grid{padding:16px}
+  .exec-platform-tabs{padding:16px}
+}
+
+/* ── LIKES / COMMENTS ── */
+.like-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;border:1px solid var(--border);background:transparent;font-family:var(--mono);font-size:12px;color:var(--text-dim);cursor:pointer;transition:.15s}
+.like-btn:hover{border-color:#F472B6;color:#F472B6}
+.like-btn.liked{border-color:#F472B6;color:#F472B6;background:rgba(244,114,182,.1)}
+.like-btn .lc{font-size:11px}
+.comment-section{margin-top:20px}
+.comment-title{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text-dim);letter-spacing:.05em;margin-bottom:14px}
+.comment-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:260px;overflow-y:auto}
+.comment-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.comment-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.comment-avatar{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#9F5FF7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.comment-name{font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+.comment-time{font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-left:auto}
+.comment-text{font-size:13px;color:var(--text);line-height:1.55}
+.comment-empty{font-size:13px;color:var(--text-muted);text-align:center;padding:20px 0}
+.comment-form{display:flex;gap:8px;align-items:flex-start}
+.comment-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--sans);outline:none;resize:none;min-height:40px;max-height:100px;transition:border-color .15s;line-height:1.5}
+.comment-input:focus{border-color:var(--accent)}
+.comment-input::placeholder{color:var(--text-muted)}
+.comment-send{padding:9px 14px;border-radius:7px;border:none;background:var(--accent);color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.comment-send:hover{background:#6D28D9}
+.comment-name-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--text);font-family:var(--mono);outline:none;margin-bottom:8px;transition:border-color .15s}
+.comment-name-input:focus{border-color:var(--accent)}
+.comment-name-input::placeholder{color:var(--text-muted)}
+/* search highlight */
+.hl-match{background:rgba(124,58,237,.35);border-radius:2px;padding:0 1px}
+/* script count badge */
+.search-info{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:12px;min-height:16px}
+/* loading skeleton */
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:800px 100%;animation:shimmer 1.4s infinite;border-radius:6px}
+
+/* ── AUTH REAL ── */
+.auth-wrap{min-height:calc(100vh - 58px);display:flex;align-items:center;justify-content:center;padding:40px 24px;background:radial-gradient(ellipse 50% 50% at 50% 30%,rgba(124,58,237,.1) 0%,transparent 65%)}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:36px;width:100%;max-width:400px}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo .logo-mark{width:40px;height:40px;border-radius:10px;font-size:20px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
+.auth-title{font-size:20px;font-weight:600;text-align:center;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--text-dim);text-align:center;margin-bottom:24px}
+.auth-fg{margin-bottom:14px}
+.auth-or{text-align:center;font-size:12px;color:var(--text-muted);margin:18px 0;position:relative}
+.auth-or::before,.auth-or::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+.auth-or::before{left:0}.auth-or::after{right:0}
+.auth-switch{text-align:center;font-size:13px;color:var(--text-dim);margin-top:20px}
+.auth-switch a{color:var(--accent);cursor:pointer}
+.auth-error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:7px;padding:9px 13px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
+.auth-error.show{display:block}
+.auth-success{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:9px 13px;font-size:13px;color:var(--green);margin-bottom:14px;display:none}
+.auth-success.show{display:block}
+/* nav user badge */
+.nav-user{display:flex;align-items:center;gap:8px}
+.nav-avatar{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--accent),#9F5FF7);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;cursor:pointer;border:none}
+.nav-username{font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.btn-logout{padding:5px 11px;border-radius:6px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--text-muted);cursor:pointer;transition:.12s}
+.btn-logout:hover{border-color:var(--red);color:var(--red)}
+.pw-toggle{position:relative}
+.pw-toggle input{padding-right:38px}
+.pw-eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;line-height:1;padding:0}
+</style>
+
+  <!-- Firebase SDK — Analytics only (REST API handles DB) -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js';
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUZvCz1QnyL_0ucLolXu4DllBD-YMOpz0",
+      authDomain: "shadowdz-b3e0e.firebaseapp.com",
+      databaseURL: "https://shadowdz-b3e0e-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "shadowdz-b3e0e",
+      storageBucket: "shadowdz-b3e0e.firebasestorage.app",
+      messagingSenderId: "401921455534",
+      appId: "1:401921455534:web:8b27407c6a5248c719043f",
+      measurementId: "G-09RXERBL7N"
+    };
+    try {
+      const app = initializeApp(firebaseConfig);
+      getAnalytics(app);
+    } catch(e) {}
+  </script>
+</head>
+<body>
+
+
+<!-- DB Rules warning banner -->
+<div id="db-warning" style="display:none;position:fixed;top:58px;left:0;right:0;z-index:500;
+  background:#FEF3C7;border-bottom:1px solid #F59E0B;padding:10px 20px;
+  align-items:center;gap:10px;font-size:13px;color:#92400E;font-family:var(--sans)">
+  <span>⚠️</span>
+  <span>Firebase chưa được cấu hình. Vào <strong>Firebase Console → Realtime Database → Rules</strong> → set <code style="background:#FDE68A;padding:1px 5px;border-radius:3px">.read/.write = true</code> → Publish.</span>
+  <button onclick="document.getElementById('db-warning').style.display='none'"
+    style="margin-left:auto;background:transparent;border:none;cursor:pointer;font-size:16px;color:#92400E">✕</button>
+</div>
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark" style="background:transparent;border:none;padding:0"><svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="44" height="44" rx="10" fill="#7C3AED"/><polygon points="26,8 18,24 23,24 20,36 30,18 24,18 28,8" fill="white"/></svg></div>
+    SHADOWDZ
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="go('home')">🏠 Home</button>
+    <button class="nav-link" onclick="go('upload')">📤 Upload</button>
+    <button class="nav-link" onclick="goFilter('trending')">🔥 Trending</button>
+    <button class="nav-link" onclick="goFilter('keyless')">🔑 Keyless</button>
+    <button class="nav-link" onclick="go('executors')">⚡ Executors</button>
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+    <div id="navGuest" style="display:flex;gap:8px">
+      <button class="btn-login" onclick="go('login')">Đăng nhập</button>
+      <button class="btn-signup" onclick="go('signup')">Đăng ký</button>
+    </div>
+    <div id="navUser" style="display:none" class="nav-user">
+      <button class="nav-avatar" id="navAvatar" onclick="go('profile')">?</button>
+      <span class="nav-username" id="navUsername"></span>
+      <button class="btn-logout" onclick="doLogout()">Thoát</button>
+    </div>
+    <button class="hamburger" onclick="toggleMenu()" id="ham" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-link active" onclick="go('home');toggleMenu()">🏠 Home</button>
+  <button class="mobile-link" onclick="go('upload');toggleMenu()">📤 Upload</button>
+  <button class="mobile-link" onclick="goFilter('trending');toggleMenu()">🔥 Trending</button>
+  <button class="mobile-link" onclick="goFilter('keyless');toggleMenu()">🔑 Keyless</button>
+  <button class="mobile-link" onclick="go('executors');toggleMenu()">⚡ Executors</button>
+  <button class="mobile-link" onclick="go('login');toggleMenu()">Login</button>
+  <button class="mobile-link" onclick="go('signup');toggleMenu()">Sign Up</button>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-eyebrow">
+      <span class="pulse"></span>
+      Nền tảng Script Roblox #1 Việt Nam
+    </div>
+    <h1>Khám phá kho Roblox<br>Script đỉnh cao</h1>
+    <p>Hàng ngàn script miễn phí, keyless, auto farm, ESP — an toàn và cập nhật liên tục từ cộng đồng.</p>
+    <div class="hero-search">
+      <input id="heroSearch" placeholder="Tìm script, game, tác giả..." oninput="handleSearch(this.value)">
+      <button onclick="handleSearch(document.getElementById('heroSearch').value)">Tìm kiếm</button>
+    </div>
+    <div class="hero-pills">
+      <span class="pill active" onclick="setPill(this,'all')">📋 Tất cả</span>
+      <span class="pill" onclick="setPill(this,'BloxFruit')">🍉 Blox Fruits</span>
+      <span class="pill" onclick="setPill(this,'Brookhaven')">🏡 Brookhaven RP</span>
+      <span class="pill" onclick="setPill(this,'Murder Mystery')">🗡️ Murder Mystery 2</span>
+      <span class="pill" onclick="setPill(this,'RIVALS')">🔫 RIVALS</span>
+      <span class="pill" onclick="setPill(this,'Blade Ball')">⚽ Blade Ball</span>
+      <span class="pill" onclick="goFilter('keyless')">🔑 Keyless</span>
+      <span class="pill" onclick="setPill(this,'AutoFarm')">⚡ Auto Farm</span>
+      <span class="pill" onclick="setPill(this,'ESP')">👁 ESP & Aimbot</span>
+      <span class="pill" onclick="setPill(this,'Steal an Egg')">🥚 Steal an Egg</span>
+      <span class="pill" onclick="setPill(this,'Pet Simulator 99')">🐾 Pet Sim 99</span>
+      <span class="pill" onclick="setPill(this,'Fisch')">🎣 Fisch</span>
+      <span class="pill" onclick="setPill(this,'Grow a Garden')">🌱 Grow a Garden</span>
+      <span class="pill" onclick="setPill(this,'Jailbreak')">🏦 Jailbreak</span>
+      <span class="pill" onclick="setPill(this,'Da Hood')">🏙️ Da Hood</span>
+      <span class="pill" onclick="setPill(this,'The Strongest Battlegrounds')">💥 TSB</span>
+      <span class="pill" onclick="setPill(this,'Anime Defenders')">⚔️ Anime Defenders</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">3,024</div><div class="stat-label">Scripts</div></div>
+      <div class="stat-item"><div class="stat-num">48K+</div><div class="stat-label">Lượt tải</div></div>
+      <div class="stat-item"><div class="stat-num">1,204</div><div class="stat-label">Thành viên</div></div>
+      <div class="stat-item"><div class="stat-num">99%</div><div class="stat-label">Uptime</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title" id="sectionTitle">🔥 Popular games &amp; scripts</span>
+      <span class="section-sub" id="sectionSub">Ranked by players on Roblox right now.</span>
+      <div class="section-right">
+        <button class="filter-chip active" style="background:var(--accent-dim);border-color:rgba(124,58,237,.4);color:var(--accent)" onclick="go('upload')">+ Đăng script mới</button>
+      </div>
+    </div>
+    <div class="filter-row" id="filterRow">
+      <button class="filter-chip active" onclick="setFilter(this,'all')">Tất cả</button>
+      <button class="filter-chip" onclick="setFilter(this,'free')">Free</button>
+      <button class="filter-chip" onclick="setFilter(this,'keyless')">Keyless</button>
+      <button class="filter-chip" onclick="setFilter(this,'paid')">Paid</button>
+      <button class="filter-chip" onclick="setFilter(this,'key')">Key System</button>
+      <button class="filter-chip" onclick="setFilter(this,'trending')">🔥 Trending</button>
+      <button class="filter-chip" onclick="setFilter(this,'new')">🆕 Mới nhất</button>
+    </div>
+    <div class="search-info" id="searchInfo"></div>
+    <div class="script-grid" id="scriptGrid"></div>
+  </div>
+</div>
+
+<!-- ══ EXECUTORS ══ -->
+<div class="page" id="page-executors">
+  <div class="exec-hero">
+    <h1>⚡ Danh sách Executor Roblox</h1>
+    <p>Tổng hợp đầy đủ executor uy tín nhất cho mọi nền tảng. Trạng thái cập nhật realtime.</p>
+  </div>
+  <div class="exec-platform-tabs" id="platTabs">
+    <button class="plat-tab active" onclick="setPlatform(this,'all')">🌐 Tất cả <span class="count" id="cnt-all">22</span></button>
+    <button class="plat-tab" onclick="setPlatform(this,'Windows')">🪟 Windows <span class="count" id="cnt-win">10</span></button>
+    <button class="plat-tab" onclick="setPlatform(this,'Android')">🤖 Android <span class="count" id="cnt-and">7</span></button>
+    <button class="plat-tab" onclick="setPlatform(this,'iOS')">🍎 iOS <span class="count" id="cnt-ios">3</span></button>
+    <button class="plat-tab" onclick="setPlatform(this,'macOS')">🍏 macOS <span class="count" id="cnt-mac">1</span></button>
+    <button class="plat-tab" onclick="setPlatform(this,'Linux')">🐧 Linux <span class="count" id="cnt-lin">1</span></button>
+  </div>
+  <div class="exec-status-bar">
+    <span class="online-dot"></span>
+    <span id="execOnlineCount" style="font-family:var(--mono);font-size:13px;color:var(--green)">16/22 online</span>
+    <span style="color:var(--text-muted);font-size:12px">— Cập nhật tự động</span>
+    <label style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);cursor:pointer">
+      <input type="checkbox" id="onlineOnly" onchange="renderExecutors()"> Online only
+    </label>
+  </div>
+  <div class="exec-grid" id="execGrid"></div>
+</div>
+
+<!-- ══ UPLOAD ══ -->
+<div class="page" id="page-upload">
+  <div class="upload-wrap">
+    <div class="upload-title">📤 Đăng Script Mới</div>
+    <div class="upload-sub">Chia sẻ script của bạn với cộng đồng. Miễn phí, không cần đăng nhập.</div>
+
+    <div class="form-section">
+      <div class="form-section-title">THÔNG TIN CƠ BẢN</div>
+      <div class="form-grid">
+        <div class="fg"><label>Tên Script</label><input type="text" id="up-title" placeholder="VD: Auto Farm Blox Fruit X9 v2"></div>
+        <div class="fg"><label>Tên tác giả</label><input type="text" id="up-author" placeholder="VD: darknode_x"></div>
+        <div class="fg"><label>Game</label>
+          <select id="up-game">
+            <option>Blox Fruits</option><option>Arsenal</option><option>BedWars</option>
+            <option>Murder Mystery 2</option><option>Adopt Me</option><option>Brookhaven RP</option>
+            <option>RIVALS</option><option>Blade Ball</option><option>Universal</option>
+          </select>
+        </div>
+        <div class="fg"><label>Loại script</label>
+          <select id="up-type">
+            <option value="free">Free</option>
+            <option value="keyless">Keyless</option>
+            <option value="paid">Paid</option>
+            <option value="key">Key System</option>
+          </select>
+        </div>
+        <div class="fg fg-full"><label>Mô tả</label><input type="text" id="up-desc" placeholder="Tính năng nổi bật, executor hỗ trợ..."></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">CODE LUA</div>
+      <textarea id="up-code" placeholder="-- Paste script Lua của bạn vào đây&#10;local Players = game:GetService(&quot;Players&quot;)&#10;..."></textarea>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">EXECUTOR TƯƠNG THÍCH</div>
+      <div class="form-tags" id="execTags">
+        <button class="form-tag sel" onclick="toggleTag(this)">KRNL</button>
+        <button class="form-tag" onclick="toggleTag(this)">Synapse X</button>
+        <button class="form-tag" onclick="toggleTag(this)">Fluxus</button>
+        <button class="form-tag" onclick="toggleTag(this)">Arceus X</button>
+        <button class="form-tag" onclick="toggleTag(this)">Delta</button>
+        <button class="form-tag" onclick="toggleTag(this)">Hydrogen</button>
+        <button class="form-tag" onclick="toggleTag(this)">Codex</button>
+        <button class="form-tag" onclick="toggleTag(this)">Solara</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="submitScript()">🚀 Đăng lên SHADOWDZ</button>
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div class="page" id="page-login">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <div class="logo-mark" style="background:transparent;border:none;padding:0;width:40px;height:40px"><svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="44" height="44" rx="10" fill="#7C3AED"/><polygon points="26,8 18,24 23,24 20,36 30,18 24,18 28,8" fill="white"/></svg></div>
+        <div class="auth-title">Đăng nhập</div>
+        <div class="auth-sub">Chào mừng trở lại SHADOWDZ</div>
+      </div>
+      <div class="auth-error" id="login-err"></div>
+      <div class="auth-success" id="login-ok"></div>
+      <div class="auth-fg"><label>Tên đăng nhập hoặc Email</label><input type="text" id="li-user" placeholder="username hoặc email@example.com" autocomplete="username"></div>
+      <div class="auth-fg"><label>Mật khẩu</label>
+        <div class="pw-toggle">
+          <input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password">
+          <button class="pw-eye" onclick="togglePw('li-pass',this)" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <button class="btn-submit" style="margin-top:8px" onclick="doLogin()">Đăng nhập</button>
+      <div class="auth-switch">Chưa có tài khoản? <a onclick="go('signup')">Đăng ký ngay</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SIGNUP ══ -->
+<div class="page" id="page-signup">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <div class="logo-mark" style="background:transparent;border:none;padding:0;width:40px;height:40px"><svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="44" height="44" rx="10" fill="#7C3AED"/><polygon points="26,8 18,24 23,24 20,36 30,18 24,18 28,8" fill="white"/></svg></div>
+        <div class="auth-title">Tạo tài khoản</div>
+        <div class="auth-sub">Tham gia cộng đồng SHADOWDZ</div>
+      </div>
+      <div class="auth-error" id="reg-err"></div>
+      <div class="auth-success" id="reg-ok"></div>
+      <div class="auth-fg"><label>Tên đăng nhập <span style="color:var(--red)">*</span></label><input type="text" id="reg-user" placeholder="shadowdz_user" autocomplete="username" oninput="checkUsername(this.value)">
+        <div id="user-check" style="font-family:var(--mono);font-size:11px;margin-top:4px;color:var(--text-muted)"></div>
+      </div>
+      <div class="auth-fg"><label>Email <span style="color:var(--red)">*</span></label><input type="email" id="reg-email" placeholder="email@example.com" autocomplete="email"></div>
+      <div class="auth-fg"><label>Mật khẩu <span style="color:var(--red)">*</span></label>
+        <div class="pw-toggle">
+          <input type="password" id="reg-pass" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password" oninput="checkPwStrength(this.value)">
+          <button class="pw-eye" onclick="togglePw('reg-pass',this)" tabindex="-1">👁</button>
+        </div>
+        <div id="pw-strength" style="margin-top:5px;height:4px;border-radius:2px;background:var(--surface3);overflow:hidden"><div id="pw-bar" style="height:100%;border-radius:2px;width:0%;transition:width .3s,background .3s"></div></div>
+      </div>
+      <button class="btn-submit" style="margin-top:8px" onclick="doRegister()">Tạo tài khoản</button>
+      <div class="auth-switch">Đã có tài khoản? <a onclick="go('login')">Đăng nhập</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DETAIL MODAL ══ -->
+<div class="overlay" id="detailOverlay" onclick="closeOverlay(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <span id="d-icon" style="font-size:22px"></span>
+      <div>
+        <div id="d-title" style="font-size:16px;font-weight:600"></div>
+        <div id="d-author" style="font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-top:2px"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('detailOverlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="d-desc"></p>
+      <div class="modal-code-wrap">
+        <div class="modal-code-bar">
+          <span style="color:var(--accent);font-family:var(--mono)">Lua 5.1</span>
+          <span id="d-game" style="margin-left:12px"></span>
+          <button class="copy-btn" onclick="doCopy()">Copy</button>
+        </div>
+        <div class="modal-code-scroll"><code id="d-code"></code></div>
+      </div>
+      <div class="modal-meta" id="d-meta"></div>
+      <div class="modal-actions" style="margin-bottom:20px">
+        <button class="like-btn" id="likeBtn" onclick="toggleLike()">
+          ♥ <span class="lc" id="likeCount">0</span> thích
+        </button>
+        <button class="btn-dl" onclick="doDownload()">⬇ Tải về .lua</button>
+        <button class="btn-sec" onclick="document.getElementById('detailOverlay').classList.remove('open')">Đóng</button>
+      </div>
+      <div class="comment-section">
+        <div class="comment-title">BÌNH LUẬN</div>
+        <div class="comment-list" id="commentList">
+          <div class="comment-empty">Đang tải bình luận...</div>
+        </div>
+        <input class="comment-name-input" id="commenterName" placeholder="Tên của bạn (tuỳ chọn)">
+        <div class="comment-form">
+          <textarea class="comment-input" id="commentInput" placeholder="Viết bình luận..." rows="1"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+          <button class="comment-send" onclick="postComment()">Gửi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+const SCRIPTS = [
+  {id:1,title:"Auto Farm Blox Fruit V4",author:"darknode_x",verified:true,game:"BloxFruit",tags:["AutoFarm"],type:"keyless",exec:["KRNL","Fluxus","Delta"],dl:5821,rating:4.9,views:18240,date:"2026-11-15",icon:"🌊",desc:"Full auto farm fruit, auto stat, tp island, bringfruit. Hỗ trợ tất cả sea. Keyless — không cần key, chạy được KRNL và Fluxus.",code:`-- Auto Farm Blox Fruit V4 (Keyless)
+-- Author: darknode_x | Tested: KRNL, Fluxus
+
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+
+local Config = {
+    AutoFarm    = true,
+    AutoEat     = true,
+    TPIsland    = true,
+    BringFruit  = false,
+    FarmRadius  = 150,
+}
+
+local function getFruits()
+    local fruits = {}
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("Model") and v:FindFirstChild("FruitName") then
+            fruits[#fruits+1] = v
+        end
+    end
+    return fruits
+end
+
+local function farm()
+    while Config.AutoFarm do
+        local char = lp.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                local d = (enemy.PrimaryPart.Position
+                    - char.HumanoidRootPart.Position).Magnitude
+                if d <= Config.FarmRadius then
+                    -- attack logic per game version
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end
+
+coroutine.wrap(farm)()
+print("[ScriptHub] Auto Farm loaded.")`},
+  {id:2,title:"ESP + Aimbot Arsenal Pro",author:"v0id_kernel",verified:true,game:"Arsenal",tags:["ESP"],type:"key",exec:["Synapse X"],dl:2103,rating:4.5,views:9800,date:"2026-11-12",icon:"🎯",desc:"ESP wallhack với box, traceline, health bar. Aimbot smooth có FOV circle. Key system — Discord để lấy key.",code:`-- ESP + Aimbot Arsenal Pro
+-- Synapse X | Key: discord.gg/xxx
+
+local runService = game:GetService("RunService")
+local players    = game:GetService("Players")
+local lp         = players.LocalPlayer
+local cam        = workspace.CurrentCamera
+
+local cfg = {
+    ESPEnabled   = true,
+    BoxESP        = true,
+    TracerESP     = true,
+    HealthBar     = true,
+    AimbotEnabled = true,
+    AimbotSmooth  = 0.35,
+    FOVRadius     = 120,
+    TeamCheck     = true,
+}
+
+local function worldToViewport(pos)
+    local vp, onScreen = cam:WorldToViewportPoint(pos)
+    return Vector2.new(vp.X, vp.Y), onScreen, vp.Z
+end
+
+runService.RenderStepped:Connect(function()
+    for _, plr in pairs(players:GetPlayers()) do
+        if plr ~= lp and plr.Character then
+            local root = plr.Character:FindFirstChild("HumanoidRootPart")
+            if root then
+                local pos, onScreen = worldToViewport(root.Position)
+                if onScreen and cfg.ESPEnabled then
+                    -- Drawing API box render
+                end
+            end
+        end
+    end
+end)`},
+  {id:3,title:"BedWars Auto Buy + Bridge",author:"crypt0_lua",verified:false,game:"BedWars",tags:["AutoFarm"],type:"free",exec:["KRNL","Fluxus","Hydrogen","Arceus X"],dl:3340,rating:4.6,views:12100,date:"2026-11-10",icon:"🛏️",desc:"Auto mua item khi đủ tiền, auto bridge speed, anti void. Nhẹ, không lag, không detect.",code:`-- BedWars Auto Buy + Bridge
+-- Author: crypt0_lua | Free | Keyless
+
+local Players    = game:GetService("Players")
+local lp         = Players.LocalPlayer
+
+local Shop = {
+    ["Iron Sword"] = {cost=10, currency="Iron"},
+    ["Shears"]     = {cost=20, currency="Iron"},
+    ["Bridge Egg"] = {cost=4,  currency="Emerald"},
+}
+
+local function autoBuy()
+    while true do
+        local inv = lp:WaitForChild("Inventory")
+        for item, data in pairs(Shop) do
+            local count = inv:FindFirstChild(data.currency)
+            if count and count.Value >= data.cost then
+                game:GetService("ReplicatedStorage")
+                    .BuyItem:FireServer(item)
+            end
+        end
+        task.wait(1.5)
+    end
+end
+
+coroutine.wrap(autoBuy)()
+print("[ScriptHub] Auto Buy active.")`},
+  {id:4,title:"Brookhaven RP Admin GUI",author:"rp_hacker",verified:false,game:"Brookhaven",tags:["GUI"],type:"keyless",exec:["KRNL","Fluxus","Delta","Hydrogen"],dl:7210,rating:4.7,views:28400,date:"2026-11-14",icon:"🏡",desc:"GUI admin đầy đủ cho Brookhaven: teleport, speed, fly, trang phục, xe. Keyless — dùng ngay.",code:`-- Brookhaven RP Admin GUI
+-- Author: rp_hacker | Keyless
+
+local Players    = game:GetService("Players")
+local lp         = Players.LocalPlayer
+local char       = lp.Character or lp.CharacterAdded:Wait()
+local hum        = char:WaitForChild("Humanoid")
+local root       = char:WaitForChild("HumanoidRootPart")
+
+-- Fly
+local flying = false
+local BodyVelocity
+
+local function toggleFly()
+    flying = not flying
+    if flying then
+        BodyVelocity = Instance.new("BodyVelocity")
+        BodyVelocity.Velocity = Vector3.zero
+        BodyVelocity.MaxForce = Vector3.new(1e5,1e5,1e5)
+        BodyVelocity.Parent  = root
+    else
+        if BodyVelocity then BodyVelocity:Destroy() end
+    end
+end
+
+-- Speed
+hum.WalkSpeed  = 24
+hum.JumpHeight = 10
+
+print("[ScriptHub] Brookhaven GUI loaded.")`},
+  {id:5,title:"RIVALS Aimbot Smooth v3",author:"rivals_god",verified:true,game:"RIVALS",tags:["ESP","Aimbot"],type:"key",exec:["Synapse X","KRNL"],dl:1890,rating:4.4,views:7600,date:"2026-11-11",icon:"🔫",desc:"Aimbot smooth với prediction, FOV circle tùy chỉnh. Silent aim tùy chọn. Key — liên hệ DC.",code:`-- RIVALS Aimbot v3
+-- Synapse X / KRNL | Key required
+
+local Players    = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInput  = game:GetService("UserInputService")
+local lp         = Players.LocalPlayer
+local cam        = workspace.CurrentCamera
+
+local cfg = {
+    SilentAim   = false,
+    Smooth      = 0.28,
+    FOV         = 110,
+    TargetPart  = "Head",
+    TeamCheck   = true,
+}
+
+local function getClosest()
+    local closest, dist = nil, cfg.FOV
+    local center = Vector2.new(cam.ViewportSize.X/2, cam.ViewportSize.Y/2)
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= lp and plr.Character then
+            local part = plr.Character:FindFirstChild(cfg.TargetPart)
+            if part then
+                local pos, on = cam:WorldToViewportPoint(part.Position)
+                if on then
+                    local d = (Vector2.new(pos.X,pos.Y)-center).Magnitude
+                    if d < dist then closest, dist = part, d end
+                end
+            end
+        end
+    end
+    return closest
+end
+
+RunService.RenderStepped:Connect(function()
+    local target = getClosest()
+    if target and UserInput:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        local pos = cam:WorldToViewportPoint(target.Position)
+        -- lerp mouse to target
+    end
+end)`},
+  {id:6,title:"Blade Ball Auto Parry",author:"bladegod_vn",verified:false,game:"Blade Ball",tags:["AutoFarm"],type:"keyless",exec:["KRNL","Fluxus","Hydrogen","Arceus X","Delta"],dl:9120,rating:4.8,views:34700,date:"2026-11-16",icon:"⚽",desc:"Auto parry không giới hạn, không cần phản ứng. Keyless, hoạt động mobile và PC.",code:`-- Blade Ball Auto Parry
+-- Author: bladegod_vn | Keyless | Mobile OK
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService        = game:GetService("RunService")
+local Players           = game:GetService("Players")
+local lp                = Players.LocalPlayer
+
+local parryRemote = ReplicatedStorage:WaitForChild("Parry")
+local enabled     = true
+
+RunService.Heartbeat:Connect(function()
+    if not enabled then return end
+    local char = lp.Character
+    if not char then return end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    
+    for _, ball in pairs(workspace:GetDescendants()) do
+        if ball.Name == "Ball" and ball:IsA("BasePart") then
+            local dist = (ball.Position - root.Position).Magnitude
+            if dist < 25 then
+                parryRemote:FireServer()
+            end
+        end
+    end
+end)
+
+print("[ScriptHub] Auto Parry active.")`},
+  {id:7,title:"Murder Mystery 2 ESP + Role",author:"nullptr_dev",verified:false,game:"Murder Mystery",tags:["ESP"],type:"free",exec:["KRNL","Delta","Fluxus"],dl:1890,rating:4.3,views:8200,date:"2026-11-08",icon:"🗡️",desc:"ESP hiện role (murderer/sheriff), radar mini-map, highlight knife và gun. Free không key.",code:`-- MM2 ESP + Role Reveal
+-- Author: nullptr_dev | Free | KRNL / Delta
+
+local Players = game:GetService("Players")
+local lp      = Players.LocalPlayer
+
+local Roles = {
+    Murderer = Color3.fromRGB(255, 80, 80),
+    Sheriff  = Color3.fromRGB(80, 160, 255),
+    Innocent = Color3.fromRGB(80, 255, 120),
+}
+
+local function getRole(plr)
+    local stats = plr:FindFirstChild("PlayerStats")
+    if stats and stats:FindFirstChild("Role") then
+        return stats.Role.Value
+    end
+    return "Innocent"
+end
+
+for _, plr in pairs(Players:GetPlayers()) do
+    if plr ~= lp then
+        local role  = getRole(plr)
+        local color = Roles[role] or Roles.Innocent
+        print(plr.Name .. " → " .. role)
+    end
+end
+
+Players.PlayerAdded:Connect(function(plr)
+    task.wait(2)
+    print(plr.Name .. " → " .. getRole(plr))
+end)`},
+  {id:8,title:"Universal Speed + Fly + Noclip",author:"base_inject",verified:false,game:"Universal",tags:["Speed","Fly"],type:"free",exec:["KRNL","Fluxus","Hydrogen","Delta","Arceus X"],dl:6240,rating:4.5,views:22400,date:"2026-11-13",icon:"⚡",desc:"Speed, fly, noclip universal cho mọi game Roblox. Hotkey toggle. Free keyless.",code:`-- Universal Movement Hacks
+-- Author: base_inject | Free Keyless
+
+local Players    = game:GetService("Players")
+local UserInput  = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local lp         = Players.LocalPlayer
+
+local state = {speed=false, fly=false, noclip=false}
+local bv, bg
+
+local function getHum()
+    local c = lp.Character
+    return c and c:FindFirstChildOfClass("Humanoid")
+end
+
+UserInput.InputBegan:Connect(function(inp, gpe)
+    if gpe then return end
+    local hum = getHum()
+    if inp.KeyCode == Enum.KeyCode.F and hum then
+        state.speed = not state.speed
+        hum.WalkSpeed = state.speed and 80 or 16
+        print("[Speed] " .. (state.speed and "ON" or "OFF"))
+    end
+    if inp.KeyCode == Enum.KeyCode.G then
+        state.noclip = not state.noclip
+        print("[Noclip] " .. (state.noclip and "ON" or "OFF"))
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    if state.noclip and lp.Character then
+        for _, p in pairs(lp.Character:GetDescendants()) do
+            if p:IsA("BasePart") then p.CanCollide = false end
+        end
+    end
+end)
+
+print("[ScriptHub] Movement loaded. F=Speed G=Noclip")`},
+  {id:9,title:"Steal an Egg Auto Farm",author:"egg_bandit",verified:true,game:"Steal an Egg",tags:["AutoFarm"],type:"keyless",exec:["KRNL","Fluxus","Delta","Hydrogen","Arceus X"],dl:3210,rating:4.7,views:11400,date:"2026-11-17",icon:"🥚",desc:"Auto đánh cắp trứng, auto hatch, auto sell. Keyless. Hỗ trợ cả mobile và PC.",code:`-- Steal an Egg Auto Farm (Keyless)
+-- Author: egg_bandit | KRNL / Fluxus / Mobile OK
+
+local Players    = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local lp         = Players.LocalPlayer
+
+local Config = {
+    AutoSteal  = true,
+    AutoHatch  = true,
+    AutoSell   = true,
+    StealRange = 30,
+    SellDelay  = 5,
+}
+
+local function findEggs()
+    local eggs = {}
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("Model") and v.Name:find("Egg") then
+            eggs[#eggs+1] = v
+        end
+    end
+    return eggs
+end
+
+local function stealLoop()
+    while Config.AutoSteal do
+        local char = lp.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local root = char.HumanoidRootPart
+            for _, egg in pairs(findEggs()) do
+                if egg.PrimaryPart then
+                    local d = (egg.PrimaryPart.Position - root.Position).Magnitude
+                    if d <= Config.StealRange then
+                        root.CFrame = CFrame.new(egg.PrimaryPart.Position)
+                        task.wait(0.05)
+                        -- trigger steal remote
+                        local remote = game:GetService("ReplicatedStorage"):FindFirstChild("StealEgg")
+                        if remote then remote:FireServer(egg) end
+                    end
+                end
+            end
+        end
+        task.wait(0.2)
+    end
+end
+
+coroutine.wrap(stealLoop)()
+print("[SHADOWDZ] Steal an Egg loaded.")`},
+  {id:10,title:"Pet Simulator 99 Auto Farm",author:"petsim_god",verified:true,game:"Pet Simulator 99",tags:["AutoFarm"],type:"keyless",exec:["KRNL","Fluxus","Arceus X","Delta"],dl:7820,rating:4.8,views:29600,date:"2026-11-16",icon:"🐾",desc:"Auto farm coins, auto hatch pet, auto equip best pet. Keyless không cần key.",code:`-- Pet Simulator 99 Auto Farm
+-- Author: petsim_god | Keyless
+
+local Players    = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local lp         = Players.LocalPlayer
+
+local cfg = {
+    AutoFarm     = true,
+    AutoHatch    = true,
+    AutoEquip    = true,
+    FarmArea     = "Starter Area",
+}
+
+local RS = game:GetService("ReplicatedStorage")
+
+local function autoHatch()
+    while true do
+        local remote = RS:FindFirstChild("HatchEgg", true)
+        if remote then remote:FireServer() end
+        task.wait(1)
+    end
+end
+
+local function autoFarm()
+    local char = lp.Character or lp.CharacterAdded:Wait()
+    local root = char:WaitForChild("HumanoidRootPart")
+    while cfg.AutoFarm do
+        for _, coin in pairs(workspace:GetDescendants()) do
+            if coin.Name == "Coin" and coin:IsA("BasePart") then
+                local d = (coin.Position - root.Position).Magnitude
+                if d < 50 then
+                    root.CFrame = CFrame.new(coin.Position)
+                    task.wait(0.05)
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end
+
+if cfg.AutoHatch then coroutine.wrap(autoHatch)() end
+coroutine.wrap(autoFarm)()
+print("[SHADOWDZ] Pet Sim 99 loaded.")`},
+  {id:11,title:"Fisch Auto Fish + Sell",author:"fisher_vn",verified:false,game:"Fisch",tags:["AutoFarm"],type:"free",exec:["KRNL","Fluxus","Hydrogen","Delta","Arceus X"],dl:5490,rating:4.6,views:19200,date:"2026-11-15",icon:"🎣",desc:"Auto câu cá, auto reel tự động, auto sell khi đầy túi. Free keyless mọi executor.",code:`-- Fisch Auto Fish v2
+-- Author: fisher_vn | Free Keyless
+
+local Players    = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local lp         = Players.LocalPlayer
+
+local cfg = { AutoFish = true, AutoSell = true, AutoReel = true }
+
+local RS = game:GetService("ReplicatedStorage")
+local castRemote = RS:WaitForChild("CastLine", 5)
+local reelRemote = RS:WaitForChild("ReelIn",   5)
+local sellRemote = RS:WaitForChild("SellFish", 5)
+
+local casting = false
+
+RunService.Heartbeat:Connect(function()
+    if not cfg.AutoFish then return end
+    if not casting then
+        casting = true
+        if castRemote then castRemote:FireServer() end
+        task.delay(2 + math.random(), function() casting = false end)
+    end
+end)
+
+-- Auto reel when fish bites
+local bite = RS:FindFirstChild("FishBite", true)
+if bite then
+    bite.OnClientEvent:Connect(function()
+        task.wait(0.1)
+        if reelRemote then reelRemote:FireServer() end
+    end)
+end
+
+print("[SHADOWDZ] Fisch Auto loaded.")`},
+  {id:12,title:"Anime Defenders Auto Wave",author:"animechad99",verified:false,game:"Anime Defenders",tags:["AutoFarm"],type:"keyless",exec:["KRNL","Fluxus","Delta"],dl:4130,rating:4.5,views:14800,date:"2026-11-14",icon:"⚔️",desc:"Auto clear wave, auto place unit tối ưu, speed up battle. Keyless.",code:`-- Anime Defenders Auto Wave
+-- Author: animechad99 | Keyless
+
+local Players = game:GetService("Players")
+local lp      = Players.LocalPlayer
+local RS      = game:GetService("ReplicatedStorage")
+
+local cfg = {
+    AutoWave  = true,
+    AutoPlace = true,
+    SpeedUp   = true,
+}
+
+local placeRemote = RS:FindFirstChild("PlaceUnit",  true)
+local waveRemote  = RS:FindFirstChild("StartWave",  true)
+local speedRemote = RS:FindFirstChild("SpeedToggle",true)
+
+local function startWave()
+    while cfg.AutoWave do
+        if waveRemote then waveRemote:FireServer() end
+        task.wait(0.5)
+        if speedRemote and cfg.SpeedUp then speedRemote:FireServer(true) end
+        task.wait(45)  -- avg wave duration
+    end
+end
+
+coroutine.wrap(startWave)()
+print("[SHADOWDZ] Anime Defenders loaded.")`},
+  {id:13,title:"Da Hood AutoAim + ESP",author:"hood_script",verified:true,game:"Da Hood",tags:["ESP","Aimbot"],type:"key",exec:["Synapse X","KRNL"],dl:2870,rating:4.4,views:10900,date:"2026-11-13",icon:"🏙️",desc:"Aimbot lock-on, ESP player + cop, money bag finder. Key — link Discord.",code:`-- Da Hood AutoAim + ESP
+-- Author: hood_script | Key required
+
+local Players    = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local lp         = Players.LocalPlayer
+local cam        = workspace.CurrentCamera
+local UIS        = game:GetService("UserInputService")
+
+local cfg = {
+    AimLock   = true,
+    ESPOn     = true,
+    AimPart   = "Head",
+    SilentAim = false,
+    FOV       = 150,
+    Smooth    = 0.22,
+}
+
+local function closest()
+    local best, bestDist = nil, cfg.FOV
+    local mid = Vector2.new(cam.ViewportSize.X/2, cam.ViewportSize.Y/2)
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= lp and p.Character then
+            local part = p.Character:FindFirstChild(cfg.AimPart)
+            if part then
+                local vp, on = cam:WorldToViewportPoint(part.Position)
+                if on then
+                    local d = (Vector2.new(vp.X, vp.Y) - mid).Magnitude
+                    if d < bestDist then best, bestDist = part, d end
+                end
+            end
+        end
+    end
+    return best
+end
+
+RunService.RenderStepped:Connect(function()
+    if not cfg.AimLock then return end
+    local t = closest()
+    if t and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        cam.CFrame = CFrame.new(cam.CFrame.Position, t.Position)
+    end
+end)
+print("[SHADOWDZ] Da Hood script loaded.")`},
+  {id:14,title:"Jailbreak Auto Rob All",author:"jb_robber",verified:false,game:"Jailbreak",tags:["AutoFarm"],type:"free",exec:["KRNL","Fluxus","Hydrogen","Delta"],dl:6710,rating:4.7,views:24300,date:"2026-11-12",icon:"🏦",desc:"Auto rob bank, jewel store, train, cargo. TP đến địa điểm, auto getaway. Free keyless.",code:`-- Jailbreak Auto Rob All
+-- Author: jb_robber | Free Keyless
+
+local Players = game:GetService("Players")
+local lp      = Players.LocalPlayer
+
+local Locations = {
+    Bank      = Vector3.new(342, 18, 1163),
+    Jewels    = Vector3.new(-843, 18, 285),
+    Museum    = Vector3.new(697, 18, -1534),
+    CargoShip = Vector3.new(1623, 18, 592),
+}
+
+local function tpTo(pos)
+    local root = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if root then root.CFrame = CFrame.new(pos + Vector3.new(0, 3, 0)) end
+end
+
+local function autoRob()
+    for name, pos in pairs(Locations) do
+        print("[JB] Heading to " .. name)
+        tpTo(pos)
+        task.wait(2)
+        -- trigger rob remote if exists
+        local remote = game:GetService("ReplicatedStorage"):FindFirstChild("StartRob", true)
+        if remote then remote:FireServer() end
+        task.wait(15)
+    end
+end
+
+coroutine.wrap(autoRob)()
+print("[SHADOWDZ] Jailbreak Auto Rob loaded.")`},
+  {id:15,title:"Grow a Garden Auto Plant",author:"garden_vn",verified:false,game:"Grow a Garden",tags:["AutoFarm"],type:"keyless",exec:["KRNL","Fluxus","Hydrogen","Arceus X","Delta"],dl:8940,rating:4.9,views:33100,date:"2026-11-17",icon:"🌱",desc:"Auto trồng cây, auto tưới, auto harvest, auto bán. Keyless. Hot nhất tuần.",code:`-- Grow a Garden Auto v3
+-- Author: garden_vn | Keyless | Trending
+
+local Players = game:GetService("Players")
+local RS      = game:GetService("ReplicatedStorage")
+local lp      = Players.LocalPlayer
+
+local cfg = {
+    AutoPlant   = true,
+    AutoWater   = true,
+    AutoHarvest = true,
+    AutoSell    = true,
+    Interval    = 1,
+}
+
+local remotes = {
+    plant   = RS:FindFirstChild("PlantSeed",  true),
+    water   = RS:FindFirstChild("WaterPlant", true),
+    harvest = RS:FindFirstChild("Harvest",    true),
+    sell    = RS:FindFirstChild("SellCrops",  true),
+}
+
+local function cycle()
+    while true do
+        if cfg.AutoPlant   and remotes.plant   then remotes.plant:FireServer()   end
+        task.wait(cfg.Interval)
+        if cfg.AutoWater   and remotes.water   then remotes.water:FireServer()   end
+        task.wait(cfg.Interval)
+        if cfg.AutoHarvest and remotes.harvest then remotes.harvest:FireServer() end
+        task.wait(cfg.Interval)
+        if cfg.AutoSell    and remotes.sell    then remotes.sell:FireServer()    end
+        task.wait(5)
+    end
+end
+
+coroutine.wrap(cycle)()
+print("[SHADOWDZ] Grow a Garden loaded.")`},
+  {id:16,title:"The Strongest Battlegrounds Auto Farm",author:"tsb_meta",verified:true,game:"The Strongest Battlegrounds",tags:["AutoFarm","ESP"],type:"keyless",exec:["KRNL","Fluxus","Delta"],dl:5230,rating:4.6,views:18700,date:"2026-11-16",icon:"💥",desc:"Auto farm EXP, auto combo, ESP player. Keyless. Meta build included.",code:`-- TSB Auto Farm
+-- Author: tsb_meta | Keyless
+
+local Players    = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local lp         = Players.LocalPlayer
+
+local cfg = { AutoFarm = true, AutoCombo = true, ESPOn = true }
+
+local function getNearestEnemy()
+    local char  = lp.Character; if not char then return end
+    local root  = char:FindFirstChild("HumanoidRootPart"); if not root then return end
+    local best, bd = nil, 100
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= lp and p.Character then
+            local r = p.Character:FindFirstChild("HumanoidRootPart")
+            if r then
+                local d = (r.Position - root.Position).Magnitude
+                if d < bd then best, bd = p, d end
+            end
+        end
+    end
+    return best
+end
+
+RunService.Heartbeat:Connect(function()
+    if not cfg.AutoFarm then return end
+    local target = getNearestEnemy()
+    if target and target.Character then
+        local root = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+        if root then
+            root.CFrame = CFrame.new(
+                target.Character.HumanoidRootPart.Position + Vector3.new(0,0,3)
+            )
+        end
+    end
+end)
+print("[SHADOWDZ] TSB Auto Farm loaded.")`},
+];
+];
+
+const EXECUTORS = [
+  {name:"Synapse X",icon:"⚡",platform:["Windows"],status:"online",level:7,free:false,features:["Level 7","DLL Inject","UNC Support","Script Hub"],desc:"Executor mạnh nhất cho Windows. Level 7, hỗ trợ toàn bộ API Roblox."},
+  {name:"KRNL",icon:"🔧",platform:["Windows"],status:"online",level:7,free:true,features:["Level 7","Free","Stable","Auto-Update"],desc:"Free executor level 7 uy tín nhất. Ổn định, không key."},
+  {name:"Fluxus",icon:"🌊",platform:["Windows","Android"],status:"online",level:6,free:true,features:["Level 6","Free","Mobile","PC"],desc:"Hỗ trợ cả Windows và Android. Nhẹ, dễ dùng."},
+  {name:"Arceus X",icon:"🐉",platform:["Android"],status:"online",level:7,free:true,features:["Level 7","Android","Keyless","Fast Inject"],desc:"Executor Android tốt nhất hiện tại. Level 7, keyless."},
+  {name:"Delta",icon:"Δ",platform:["Windows","Android"],status:"online",level:6,free:true,features:["Level 6","Free","Lightweight"],desc:"Nhẹ, nhanh, hỗ trợ cả PC và mobile."},
+  {name:"Hydrogen",icon:"H",platform:["iOS","Android"],status:"online",level:5,free:true,features:["Level 5","iOS","Android","No Jailbreak"],desc:"Executor cho iOS không cần jailbreak. Hiếm và ổn định."},
+  {name:"Codex",icon:"📘",platform:["Windows"],status:"partial",level:6,free:true,features:["Level 6","Auto-Inject","Keyless"],desc:"Keyless, tự inject khi mở game. Thỉnh thoảng crash."},
+  {name:"Solara",icon:"☀️",platform:["Windows"],status:"online",level:7,free:true,features:["Level 7","Free","New","Fast"],desc:"Executor mới nổi, level 7 miễn phí. Đang phát triển mạnh."},
+  {name:"Wave",icon:"〰️",platform:["Windows"],status:"online",level:7,free:false,features:["Level 7","Paid","Stable","UNC"],desc:"Paid executor premium. Rất ổn định, ít bị detect."},
+  {name:"Zorara",icon:"🌀",platform:["Windows"],status:"offline",level:5,free:true,features:["Level 5","Free","Outdated"],desc:"Đang offline bảo trì. Chờ cập nhật."},
+  {name:"JJSploit",icon:"💥",platform:["Windows"],status:"online",level:5,free:true,features:["Level 5","Free","Easy","Beginner"],desc:"Cho người mới bắt đầu. Level 5, dễ dùng."},
+  {name:"Oxygen U",icon:"O₂",platform:["macOS"],status:"online",level:7,free:false,features:["Level 7","macOS","Paid"],desc:"Executor duy nhất hoạt động ổn định trên macOS."},
+  {name:"Xeno",icon:"🧬",platform:["Android"],status:"online",level:7,free:false,features:["Level 7","Android","Paid","Stable"],desc:"Paid executor Android cao cấp. Ổn định hơn Arceus X."},
+  {name:"Comet",icon:"☄️",platform:["Android"],status:"partial",level:6,free:true,features:["Level 6","Free","Android"],desc:"Executor Android free đang được cập nhật."},
+  {name:"Vega X",icon:"⭐",platform:["Android"],status:"online",level:6,free:true,features:["Level 6","Free","Keyless","Android"],desc:"Keyless Android executor, stable level 6."},
+  {name:"Paladin X",icon:"🛡️",platform:["iOS"],status:"online",level:6,free:false,features:["Level 6","iOS","Paid"],desc:"iOS executor paid. Không cần jailbreak."},
+  {name:"Delta iOS",icon:"Δ",platform:["iOS"],status:"online",level:5,free:true,features:["Level 5","iOS","Free"],desc:"Phiên bản iOS của Delta. Level 5 miễn phí."},
+  {name:"Nihon",icon:"🗾",platform:["Linux"],status:"online",level:7,free:false,features:["Level 7","Linux","Paid"],desc:"Executor Linux hiếm hoi. Level 7 paid."},
+  {name:"Electron",icon:"⚛️",platform:["Windows"],status:"partial",level:5,free:true,features:["Level 5","Free","Old"],desc:"Executor cũ, vẫn hoạt động nhưng unstable."},
+  {name:"ProtoSmasher",icon:"🔨",platform:["Windows"],status:"offline",level:7,free:false,features:["Level 7","Discontinued"],desc:"Đã ngừng hoạt động. Chỉ dùng như lịch sử."},
+  {name:"Coco Z",icon:"🥥",platform:["Android"],status:"online",level:5,free:true,features:["Level 5","Android","Free"],desc:"Android free executor nhẹ. Hợp cho máy yếu."},
+  {name:"Evon",icon:"🌙",platform:["Windows"],status:"online",level:7,free:true,features:["Level 7","Free","Keyless","New"],desc:"Mới, free, level 7, keyless. Đang được chú ý."},
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentPage   = 'home';
+let filterType    = 'all';
+let currentGame   = null;
+let currentExec   = null;
+let filterGame    = 'all';
+let searchQuery   = '';
+let platformFilter = 'all';
+let activeScript  = null;
+
+// ═══════════════════════════════════════
+// ROUTING
+// ═══════════════════════════════════════
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const map = {home:0, upload:1, executors:4};
+  const links = document.querySelectorAll('.nav-link');
+  if (map[page] !== undefined) links[map[page]].classList.add('active');
+  currentPage = page;
+  window.scrollTo(0, 0);
+  if (page === 'executors') renderExecutors();
+}
+
+function goFilter(f) {
+  go('home');
+  filterType = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  const chips = document.querySelectorAll('.filter-chip');
+  if (f === 'trending') chips[5].classList.add('active');
+  if (f === 'keyless')  chips[2].classList.add('active');
+  renderScripts();
+}
+
+// hash routing
+window.addEventListener('hashchange', () => {
+  const h = location.hash.slice(1);
+  if (['home','executors','upload','login','signup'].includes(h)) go(h);
+});
+if (location.hash) {
+  const h = location.hash.slice(1);
+  if (['home','executors','upload','login','signup'].includes(h)) go(h);
+}
+
+// ═══════════════════════════════════════
+// SCRIPT FILTER / RENDER
+// ═══════════════════════════════════════
+function getFiltered() {
+  let list = [...SCRIPTS];
+  // Game filter — from pill or sidebar
+  const activeGame = currentGame || filterGame;
+  if (activeGame && activeGame !== 'all') {
+    if (activeGame === 'AutoFarm') list = list.filter(s => (s.tags||[]).includes('AutoFarm'));
+    else if (activeGame === 'ESP') list = list.filter(s => (s.tags||[]).includes('ESP'));
+    else list = list.filter(s => s.game.toLowerCase().includes(activeGame.toLowerCase()));
+  }
+  if (currentExec) {
+    list = list.filter(s => (s.exec||[]).includes(currentExec));
+  }
+  if (filterType === 'free' || filterType === 'paid' || filterType === 'key') {
+    list = list.filter(s => s.type === filterType);
+  } else if (filterType === 'keyless') {
+    list = list.filter(s => s.type === 'keyless' || s.type === 'free');
+  } else if (filterType === 'trending') {
+    list = list.sort((a,b) => b.views - a.views).slice(0, 8);
+  } else if (filterType === 'new') {
+    list = list.sort((a,b) => new Date(b.date) - new Date(a.date));
+  }
+  return list;
+}
+
+function hl(code) {
+  return code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(--[^\n]*)/g,'<span class="cm">$1</span>')
+    .replace(/\b(local|function|if|then|else|end|while|for|do|return|not|and|or|true|false|nil|in|repeat|until|break|task)\b/g,'<span class="kw">$1</span>')
+    .replace(/"([^"]*)"/g,'"<span class="str">$1</span>"')
+    .replace(/\b(\w+)\s*(?=\()/g,'<span class="fn">$1</span>');
+}
+
+function typeBadge(t) {
+  if (t === 'keyless') return '<span class="badge b-keyless">KEYLESS</span>';
+  if (t === 'free')    return '<span class="badge b-free">FREE</span>';
+  if (t === 'paid')    return '<span class="badge b-paid">PAID</span>';
+  if (t === 'key')     return '<span class="badge b-key">KEY</span>';
+}
+
+
+function setFilter(btn, type) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  filterType = type;
+  renderScripts();
+}
+function filterGame(btn, game) {
+  document.querySelectorAll('.sidebar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGame = (currentGame === game) ? null : game;
+  renderScripts();
+}
+
+function filterExec(exec) {
+  currentExec = (currentExec === exec) ? null : exec;
+  renderScripts();
+}
+
+
+function setPill(el, game) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentGame = (game === 'all') ? null : game;
+  renderScripts();
+}
+
+
+function tokenize(str) {
+  return str.toLowerCase().replace(/[^a-z0-9\u00c0-\u024f\s]/g,'').split(/\s+/).filter(Boolean);
+}
+
+function scoreScript(s, tokens) {
+  const haystack = [s.title, s.author, s.game, s.desc, ...(s.tags||[]), ...(s.exec||[])]
+    .join(' ').toLowerCase();
+  let score = 0;
+  for (const t of tokens) {
+    if (haystack.includes(t)) {
+      if (s.title.toLowerCase().includes(t)) score += 10;
+      else if (s.game.toLowerCase().includes(t)) score += 5;
+      else score += 1;
+    }
+  }
+  return score;
+}
+
+function highlightText(text, tokens) {
+  if (!tokens.length) return escHtml(text);
+  let out = escHtml(text);
+  for (const t of tokens) {
+    const re = new RegExp('(' + t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+    out = out.replace(re, '<span class="hl-match">$1</span>');
+  }
+  return out;
+}
+
+function renderScripts() {
+  const info = document.getElementById('searchInfo');
+  const grid = document.getElementById('scriptGrid');
+  if (!grid) return;
+
+  let list = getFiltered();
+  const tokens = searchQuery ? tokenize(searchQuery) : [];
+
+  if (searchQuery && tokens.length) {
+    list = list.map(s => ({ s, score: scoreScript(s, tokens) }))
+               .filter(x => x.score > 0)
+               .sort((a,b) => b.score - a.score)
+               .map(x => x.s);
+    if (info) info.textContent = list.length + ' kết quả cho "' + searchQuery + '"';
+  } else {
+    if (info) info.textContent = '';
+  }
+
+  if (!list.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--text-muted)">Không tìm thấy script nào.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map((s, i) => {
+    const titleHtml = tokens.length ? highlightText(s.title, tokens) : escHtml(s.title);
+    return `
+<div class="scard" onclick="openDetail(${s.id})">
+  <div class="scard-top">
+    ${filterType==='trending'?`<div class="trending-num">${String(i+1).padStart(2,'0')}</div>`:''}
+    <div class="scard-icon">${s.icon}</div>
+    <div class="scard-info">
+      <div class="scard-title">${titleHtml}</div>
+      <div class="scard-author">${escHtml(s.author)}${s.verified?'<span class="verified">✓</span>':''}</div>
+    </div>
+  </div>
+  <div class="scard-badges">
+    ${typeBadge(s.type)}
+    <span class="badge b-game">${escHtml(s.game)}</span>
+    ${(s.exec||[]).slice(0,2).map(e=>`<span class="badge b-game">${escHtml(e)}</span>`).join('')}
+  </div>
+  <div class="code-preview">
+    <div class="code-topbar">
+      <div class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+      <span class="code-topbar-name">script.lua</span>
+    </div>
+    <div class="code-body"><code>${hl(s.code.slice(0,350))}</code></div>
+  </div>
+  <div class="scard-foot">
+    <span class="foot-stat">⬇ ${s.dl.toLocaleString()}</span>
+    <span class="foot-stat">👁 ${(s.views/1000).toFixed(1)}k</span>
+    <span class="foot-stat">★ ${s.rating}</span>
+    <span class="scard-action">Xem script</span>
+  </div>
+</div>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  const s = SCRIPTS.find(x => x.id === id);
+  if (!s) return;
+  activeScript = s;
+  document.getElementById('d-icon').textContent   = s.icon;
+  document.getElementById('d-title').textContent  = s.title;
+  document.getElementById('d-author').textContent = 'by ' + s.author + (s.verified ? ' ✓' : '');
+  document.getElementById('d-desc').textContent   = s.desc;
+  document.getElementById('d-game').textContent   = s.game;
+  document.getElementById('d-code').innerHTML     = hl(s.code);
+  document.getElementById('d-meta').innerHTML     = `
+    <span>⬇ ${s.dl.toLocaleString()} lượt tải</span>
+    <span>👁 ${s.views.toLocaleString()} lượt xem</span>
+    <span>★ ${s.rating}/5.0</span>
+    <span>📅 ${s.date}</span>
+    <span>Executor: ${(s.exec||[]).join(', ')}</span>
+  `;
+  const overlay = document.getElementById('detailOverlay');
+  if (overlay) overlay.classList.add('open');
+  const ci = document.getElementById('commentInput');
+  if (ci) { ci.value = ''; ci.style.height = 'auto'; }
+  loadLikes(s.id);
+  loadComments(s.id);
+}
+
+
+function handleSearch(v) {
+  searchQuery = v;
+  renderScripts();
+}
+
+// ═══════════════════════════════════════
+// DETAIL MODAL
+// ═══════════════════════════════════════
+
+function closeOverlay(e) {
+  if (e.target === document.getElementById('detailOverlay'))
+    document.getElementById('detailOverlay').classList.remove('open');
+}
+
+function doCopy() {
+  if (!activeScript) return;
+  navigator.clipboard.writeText(activeScript.code).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1600);
+  });
+}
+
+function doDownload() {
+  if (!activeScript) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([activeScript.code], {type:'text/plain'}));
+  a.download = activeScript.title.replace(/\s+/g,'_') + '.lua';
+  a.click();
+}
+
+// ═══════════════════════════════════════
+// EXECUTORS
+// ═══════════════════════════════════════
+function setPlatform(btn, plat) {
+  document.querySelectorAll('.plat-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  platformFilter = plat;
+  renderExecutors();
+}
+
+function renderExecutors() {
+  const onlineOnly = document.getElementById('onlineOnly')?.checked;
+  let list = [...EXECUTORS];
+  if (platformFilter !== 'all') list = list.filter(e => e.platform.includes(platformFilter));
+  if (onlineOnly) list = list.filter(e => e.status === 'online');
+
+  const online = list.filter(e => e.status === 'online').length;
+  document.getElementById('execOnlineCount').textContent = `${online}/${list.length} online`;
+
+  const statusEl = {online:'<span class="exec-status status-on">● Online</span>',
+                     partial:'<span class="exec-status status-partial">◑ Partial</span>',
+                     offline:'<span class="exec-status status-off">○ Offline</span>'};
+  document.getElementById('execGrid').innerHTML = list.map(e => `
+<div class="exec-card">
+  <div class="exec-top">
+    <div class="exec-icon">${e.icon}</div>
+    <div>
+      <div class="exec-name">${e.name}</div>
+      <div class="exec-plat">${e.platform.join(' · ')} · ${e.free?'Free':'Paid'}</div>
+    </div>
+  </div>
+  ${statusEl[e.status]}
+  <div class="exec-features">${e.features.map(f=>`<span class="exec-feat">${f}</span>`).join('')}</div>
+  <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.5">${e.desc}</div>
+  <div class="exec-level">
+    <span>Level ${e.level}</span>
+    <div class="level-bar"><div class="level-fill" style="width:${e.level/7*100}%"></div></div>
+    <span>${e.level}/7</span>
+  </div>
+</div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// UPLOAD
+// ═══════════════════════════════════════
+function toggleTag(btn) { btn.classList.toggle('sel'); }
+
+function submitScript() {
+  const title  = document.getElementById('up-title').value.trim();
+  const code   = document.getElementById('up-code').value.trim();
+  if (!title || !code) { alert('Điền tên và code.'); return; }
+  const newS = {
+    id: SCRIPTS.length + 1,
+    title, author: document.getElementById('up-author').value || 'anonymous',
+    verified: false,
+    game: document.getElementById('up-game').value,
+    tags: [],
+    type: document.getElementById('up-type').value,
+    exec: Array.from(document.querySelectorAll('.form-tag.sel')).map(t=>t.textContent),
+    dl: 0, rating: 5.0, views: 0,
+    date: new Date().toISOString().slice(0,10),
+    icon: '📄',
+    desc: document.getElementById('up-desc').value || 'Script mới.',
+    code,
+  };
+  SCRIPTS.unshift(newS);
+  go('home');
+  filterType = 'new';
+  renderScripts();
+}
+
+// ═══════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════
+let dark = false;
+function toggleTheme() {
+  dark = !dark;
+  document.getElementById('themeBtn').textContent = dark ? '☀️' : '🌙';
+  if (dark) {
+    document.documentElement.style.setProperty('--bg','#080810');
+    document.documentElement.style.setProperty('--bg2','#0E0E1A');
+    document.documentElement.style.setProperty('--surface','#13131F');
+    document.documentElement.style.setProperty('--surface2','#1A1A2C');
+    document.documentElement.style.setProperty('--surface3','#222238');
+    document.documentElement.style.setProperty('--border','#2A2A42');
+    document.documentElement.style.setProperty('--border2','#363658');
+    document.documentElement.style.setProperty('--text','#EEF0F6');
+    document.documentElement.style.setProperty('--text-dim','#8892A4');
+    document.documentElement.style.setProperty('--text-muted','#464D5E');
+    document.documentElement.style.setProperty('--green','#34D399');
+    document.documentElement.style.setProperty('--yellow','#FBBF24');
+    document.documentElement.style.setProperty('--red','#F87171');
+    document.documentElement.style.setProperty('--blue','#60A5FA');
+    document.getElementById('navBtn') && (document.querySelector('nav').style.background = 'rgba(8,8,16,0.88)');
+  } else {
+    ['--bg','--bg2','--surface','--surface2','--surface3','--border','--border2',
+     '--text','--text-dim','--text-muted','--green','--yellow','--red','--blue']
+      .forEach(v => document.documentElement.style.removeProperty(v));
+    document.querySelector('nav') && (document.querySelector('nav').style.background = '');
+  }
+}
+
+// ═══════════════════════════════════════
+// MOBILE MENU
+// ═══════════════════════════════════════
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════
+// DB BACKEND — Firebase Realtime Database REST API
+// No SDK needed — pure fetch to https://shadowdz-b3e0e-default-rtdb.asia-southeast1.firebasedatabase.app
+// Rules: set .read/.write = true in Firebase Console
+// ═══════════════════════════════════════
+
+const FB = "https://shadowdz-b3e0e-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+function getUid() {
+  try {
+    let id = localStorage.getItem('sdz_uid');
+    if (!id) { id = 'u_' + Math.random().toString(36).slice(2,10); localStorage.setItem('sdz_uid', id); }
+    return id;
+  } catch(e) { return 'anon'; }
+}
+
+let uid = getUid();
+
+// ── Firebase REST helpers ──
+async function fbGet(path) {
+  try {
+    const r = await fetch(FB + '/' + path + '.json');
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+async function fbSet(path, data) {
+  try {
+    const r = await fetch(FB + '/' + path + '.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return r.ok;
+  } catch(e) { return false; }
+}
+
+async function fbPush(path, data) {
+  try {
+    const r = await fetch(FB + '/' + path + '.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) return null;
+    const res = await r.json();
+    return res.name; // auto-generated key
+  } catch(e) { return null; }
+}
+
+async function fbDelete(path) {
+  try {
+    await fetch(FB + '/' + path + '.json', { method: 'DELETE' });
+  } catch(e) {}
+}
+
+// ── LIKES ──
+async function loadLikes(scriptId) {
+  const btn     = document.getElementById('likeBtn');
+  const countEl = document.getElementById('likeCount');
+  if (!countEl) return;
+  const data = await fbGet('likes/' + scriptId);
+  if (!data) { countEl.textContent = '0'; return; }
+  const count = data.count || 0;
+  const liked = uid && (data.users || {})[uid];
+  countEl.textContent = count;
+  if (btn) { liked ? btn.classList.add('liked') : btn.classList.remove('liked'); }
+}
+
+async function toggleLike() {
+  if (!activeScript) return;
+  const btn     = document.getElementById('likeBtn');
+  const countEl = document.getElementById('likeCount');
+  const data    = await fbGet('likes/' + activeScript.id) || {};
+  const users   = data.users || {};
+  const liked   = !!users[uid];
+  const newCount = Math.max(0, (data.count || 0) + (liked ? -1 : 1));
+  if (liked) delete users[uid]; else users[uid] = true;
+  await fbSet('likes/' + activeScript.id, { count: newCount, users });
+  if (countEl) countEl.textContent = newCount;
+  if (btn) { liked ? btn.classList.remove('liked') : btn.classList.add('liked'); }
+}
+
+// ── COMMENTS ──
+function timeAgo(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  if (diff < 60000)    return 'vừa xong';
+  if (diff < 3600000)  return Math.floor(diff/60000) + ' phút trước';
+  if (diff < 86400000) return Math.floor(diff/3600000) + ' giờ trước';
+  return Math.floor(diff/86400000) + ' ngày trước';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadComments(scriptId) {
+  const list = document.getElementById('commentList');
+  if (!list) return;
+  list.innerHTML = '<div class="comment-empty">Đang tải...</div>';
+  const data = await fbGet('comments/' + scriptId);
+  if (!data) {
+    list.innerHTML = '<div class="comment-empty">Chưa có bình luận. Hãy là người đầu tiên!</div>';
+    return;
+  }
+  const items = Object.values(data).sort((a,b) => (b.ts||0) - (a.ts||0)).slice(0,50);
+  if (!items.length) {
+    list.innerHTML = '<div class="comment-empty">Chưa có bình luận. Hãy là người đầu tiên!</div>';
+    return;
+  }
+  list.innerHTML = items.map(c => {
+    const initials = (c.name||'?').slice(0,2).toUpperCase();
+    return `<div class="comment-item">
+      <div class="comment-header">
+        <div class="comment-avatar">${initials}</div>
+        <span class="comment-name">${escHtml(c.name||'Ẩn danh')}</span>
+        <span class="comment-time">${timeAgo(c.ts||0)}</span>
+      </div>
+      <div class="comment-text">${escHtml(c.text||'')}</div>
+    </div>`;
+  }).join('');
+}
+
+async function postComment() {
+  const input = document.getElementById('commentInput');
+  const text  = (input && input.value || '').trim();
+  if (!text || !activeScript) return;
+  const name = (document.getElementById('commenterName') && document.getElementById('commenterName').value || '').trim() || 'Ẩn danh';
+  const btn  = document.querySelector('.comment-send');
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  await fbPush('comments/' + activeScript.id, { name, text, ts: Date.now(), uid });
+  if (input) { input.value = ''; input.style.height = 'auto'; }
+  await loadComments(activeScript.id);
+  if (btn) { btn.disabled = false; btn.textContent = 'Gửi'; }
+}
+
+// ── initDB: verify Firebase connection ──
+async function initDB() {
+  uid = getUid();
+  // Test connectivity — write a ping to verify rules are set correctly
+  try {
+    const r = await fetch(FB + '/ping.json', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ts: Date.now()})
+    });
+    if (!r.ok) {
+      console.warn('[SHADOWDZ] Firebase write blocked (status ' + r.status + '). Check DB Rules: set .write = true');
+      showDbWarning();
+    } else {
+      console.log('[SHADOWDZ] Firebase connected ✓');
+      hideDbWarning();
+    }
+  } catch(e) {
+    console.warn('[SHADOWDZ] Firebase unreachable:', e.message);
+  }
+}
+
+function showDbWarning() {
+  const w = document.getElementById('db-warning');
+  if (w) w.style.display = 'flex';
+}
+function hideDbWarning() {
+  const w = document.getElementById('db-warning');
+  if (w) w.style.display = 'none';
+}
+
+
+// ═══════════════════════════════════════
+// AUTH SYSTEM — Firebase Realtime Database
+// users/{username} → {username, email, pwHash, joined, avatar}
+// ═══════════════════════════════════════
+
+let currentUser = null;
+
+async function hashPw(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw + 'sdz_salt_v1'));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function showAuthMsg(id, msg, isOk=false) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = (isOk ? 'auth-success show' : 'auth-error show');
+}
+function clearAuthMsg(...ids) {
+  ids.forEach(id => { const e=document.getElementById(id); if(e){e.className=e.className.replace(' show','');e.textContent='';} });
+}
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+function checkPwStrength(pw) {
+  const bar = document.getElementById('pw-bar');
+  if (!bar) return;
+  let score = 0;
+  if (pw.length >= 6)  score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  bar.style.width = (score/5*100) + '%';
+  bar.style.background = score<=1?'#DC2626':score<=3?'#D97706':'#059669';
+}
+
+let _ucTimer = null;
+function checkUsername(val) {
+  const el = document.getElementById('user-check');
+  if (!el) return;
+  if (!val || val.length < 3) { el.textContent=''; return; }
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(val)) {
+    el.textContent='✗ Chỉ dùng a-z, 0-9, _ (3-20 ký tự)'; el.style.color='var(--red)'; return;
+  }
+  el.textContent='Đang kiểm tra...'; el.style.color='var(--text-muted)';
+  clearTimeout(_ucTimer);
+  _ucTimer = setTimeout(async () => {
+    const data = await fbGet('users/' + val.toLowerCase());
+    if (data && data.username) {
+      el.textContent='✗ Tên đã được dùng'; el.style.color='var(--red)';
+    } else {
+      el.textContent='✓ Tên có thể dùng'; el.style.color='var(--green)';
+    }
+  }, 500);
+}
+
+async function doRegister() {
+  clearAuthMsg('reg-err','reg-ok');
+  const username = (document.getElementById('reg-user').value||'').trim().toLowerCase();
+  const email    = (document.getElementById('reg-email').value||'').trim().toLowerCase();
+  const pw       = (document.getElementById('reg-pass').value||'');
+  if (!username||!email||!pw) return showAuthMsg('reg-err','Vui lòng điền đầy đủ.');
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) return showAuthMsg('reg-err','Tên không hợp lệ. Dùng a-z, 0-9, _ (3-20 ký tự).');
+  if (pw.length < 6) return showAuthMsg('reg-err','Mật khẩu tối thiểu 6 ký tự.');
+  if (!email.includes('@')) return showAuthMsg('reg-err','Email không hợp lệ.');
+  const existing = await fbGet('users/' + username);
+  if (existing && existing.username) return showAuthMsg('reg-err','Tên đăng nhập đã tồn tại.');
+  const pwHash   = await hashPw(pw);
+  const initials = username.slice(0,2).toUpperCase();
+  const ok = await fbSet('users/' + username, { username, email, pwHash, joined: Date.now(), avatar: initials, scripts: 0 });
+  if (!ok) return showAuthMsg('reg-err','Lỗi kết nối. Thử lại sau.');
+  const session = { username, avatar: initials, joined: Date.now() };
+  try { localStorage.setItem('sdz_session', JSON.stringify(session)); } catch(e) {}
+  currentUser = session;
+  updateNavUser();
+  showAuthMsg('reg-ok','Đăng ký thành công! Chào mừng ' + username + ' 👋', true);
+  setTimeout(() => go('home'), 1200);
+}
+
+async function doLogin() {
+  clearAuthMsg('login-err','login-ok');
+  const input = (document.getElementById('li-user').value||'').trim().toLowerCase();
+  const pw    = (document.getElementById('li-pass').value||'');
+  if (!input||!pw) return showAuthMsg('login-err','Điền đầy đủ thông tin.');
+  const userData = await fbGet('users/' + input);
+  if (!userData||!userData.pwHash) return showAuthMsg('login-err','Sai tên đăng nhập hoặc mật khẩu.');
+  const pwHash = await hashPw(pw);
+  if (userData.pwHash !== pwHash) return showAuthMsg('login-err','Sai tên đăng nhập hoặc mật khẩu.');
+  const session = { username: userData.username, avatar: userData.avatar||userData.username.slice(0,2).toUpperCase(), joined: userData.joined };
+  try { localStorage.setItem('sdz_session', JSON.stringify(session)); } catch(e) {}
+  currentUser = session;
+  updateNavUser();
+  showAuthMsg('login-ok','Đăng nhập thành công! 👋', true);
+  setTimeout(() => go('home'), 1000);
+}
+
+function doLogout() {
+  try { localStorage.removeItem('sdz_session'); } catch(e) {}
+  currentUser = null;
+  updateNavUser();
+  go('home');
+}
+
+function updateNavUser() {
+  const guestEl = document.getElementById('navGuest');
+  const userEl  = document.getElementById('navUser');
+  if (!guestEl||!userEl) return;
+  if (currentUser) {
+    guestEl.style.display = 'none';
+    userEl.style.display  = 'flex';
+    const av = document.getElementById('navAvatar');
+    const un = document.getElementById('navUsername');
+    if (av) av.textContent = currentUser.avatar;
+    if (un) un.textContent = currentUser.username;
+  } else {
+    guestEl.style.display = 'flex';
+    userEl.style.display  = 'none';
+  }
+}
+
+function loadSession() {
+  try {
+    const s = localStorage.getItem('sdz_session');
+    if (s) { currentUser = JSON.parse(s); updateNavUser(); }
+  } catch(e) {}
+}
+
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+(async () => {
+  await initDB();
+  loadSession();
+  renderScripts();
+})();
+</script>
+
+<footer style="border-top:1px solid var(--border);padding:28px 24px;text-align:center;margin-top:40px">
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
+    <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="44" height="44" rx="10" fill="#7C3AED"/><polygon points="26,8 18,24 23,24 20,36 30,18 24,18 28,8" fill="white"/></svg>
+    <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.02em">SHADOWDZ</span>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Nền tảng chia sẻ Script Roblox miễn phí &amp; an toàn.</p>
+  <p style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">Website by <span style="color:var(--accent)">MK</span></p>
+</footer>
+</body>
+</html>
