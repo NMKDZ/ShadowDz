@@ -1807,7 +1807,7 @@ function renderScripts() {
   let list=getFiltered();
   const tokens=searchQuery?tokenize(searchQuery):[];
   if(searchQuery&&tokens.length) {
-    list=list.map(s=>{return{s,score:scoreScript(s,tokens)};}))
+    list=list.map(s=>({s,score:scoreScript(s,tokens)}))
              .filter(x=>x.score>0)
              .sort((a,b)=>b.score-a.score)
              .map(x=>x.s);
