@@ -851,13 +851,6 @@ input::placeholder,textarea::placeholder{color:var(--text-muted)}
 </div>
 
 <script>
-
-// ═══════════════════════════════════
-// SHADOWDZ — Production JS
-// Firebase REST API | No SDK required
-// Website by MK
-// ═══════════════════════════════════
-
 const SCRIPTS = [
   {id:1,title:"Auto Farm Blox Fruit V4",author:"darknode_x",verified:true,game:"BloxFruit",tags:["AutoFarm"],type:"keyless",exec:["KRNL","Fluxus","Delta"],dl:5821,rating:4.9,views:18240,date:"2026-11-15",icon:"🌊",desc:"Full auto farm fruit, auto stat, tp island, bringfruit. Hỗ trợ tất cả sea. Keyless — không cần key, chạy được KRNL và Fluxus.",code:`-- Auto Farm Blox Fruit V4 (Keyless)
 -- Author: darknode_x | Tested: KRNL, Fluxus
@@ -1446,7 +1439,6 @@ RunService.Heartbeat:Connect(function()
 end)
 print("[SHADOWDZ] TSB Auto Farm loaded.")`},
 ];
-];
 
 const EXECUTORS = [
   {name:"Synapse X",icon:"⚡",platform:["Windows"],status:"online",level:7,free:false,features:["Level 7","DLL Inject","UNC Support","Script Hub"],desc:"Executor mạnh nhất cho Windows. Level 7, hỗ trợ toàn bộ API Roblox."},
@@ -1475,10 +1467,10 @@ const EXECUTORS = [
 
 
 
-// ─── CONFIG ───
-const FB  = "https://shadowdz-b3e0e-default-rtdb.asia-southeast1.firebasedatabase.app";
+// === CONFIG ===
+const FB = "https://shadowdz-b3e0e-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-// ─── STATE ───
+// === STATE ===
 let currentPage    = 'home';
 let filterType     = 'all';
 let currentGame    = null;
@@ -1490,110 +1482,100 @@ let currentUser    = null;
 let dark           = false;
 let uid            = null;
 
-// ─── UTILS ───
-function getUid() {
-  try {
-    let id = localStorage.getItem('sdz_uid');
-    if (!id) { id = 'u_' + Math.random().toString(36).slice(2,10); localStorage.setItem('sdz_uid', id); }
+// === UTILS ===
+function getUid(){
+  try{
+    let id=localStorage.getItem('sdz_uid');
+    if(!id){id='u_'+Math.random().toString(36).slice(2,10);localStorage.setItem('sdz_uid',id);}
     return id;
-  } catch(e) { return 'anon_' + Math.random().toString(36).slice(2,6); }
+  }catch(e){return 'anon';}
 }
-
-function escHtml(s) {
+function escHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function timeAgo(ts) {
-  if (!ts) return '';
-  const d = Date.now() - ts;
-  if (d < 60000)    return 'vừa xong';
-  if (d < 3600000)  return Math.floor(d/60000) + ' phút trước';
-  if (d < 86400000) return Math.floor(d/3600000) + ' giờ trước';
-  return Math.floor(d/86400000) + ' ngày trước';
+function timeAgo(ts){
+  if(!ts)return'';
+  const d=Date.now()-ts;
+  if(d<60000)return'vừa xong';
+  if(d<3600000)return Math.floor(d/60000)+' phút trước';
+  if(d<86400000)return Math.floor(d/3600000)+' giờ trước';
+  return Math.floor(d/86400000)+' ngày trước';
 }
-
-function hl(code) {
+function hl(code){
   return code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/(--[^\n]*)/g,'<span class="cm">$1</span>')
     .replace(/\b(local|function|if|then|else|end|while|for|do|return|not|and|or|true|false|nil|in|repeat|until|break|task)\b/g,'<span class="kw">$1</span>')
     .replace(/"([^"]*)"/g,'"<span class="str">$1</span>"')
     .replace(/\b(\w+)\s*(?=\()/g,'<span class="fn">$1</span>');
 }
-
-function typeBadge(t) {
-  if (t==='keyless') return '<span class="badge b-keyless">KEYLESS</span>';
-  if (t==='free')    return '<span class="badge b-free">FREE</span>';
-  if (t==='paid')    return '<span class="badge b-paid">PAID</span>';
-  if (t==='key')     return '<span class="badge b-key">KEY</span>';
-  return '';
+function typeBadge(t){
+  if(t==='keyless')return'<span class="badge b-keyless">KEYLESS</span>';
+  if(t==='free')return'<span class="badge b-free">FREE</span>';
+  if(t==='paid')return'<span class="badge b-paid">PAID</span>';
+  if(t==='key')return'<span class="badge b-key">KEY</span>';
+  return'';
 }
 
-// ─── FIREBASE REST ───
-async function fbGet(path) {
-  try {
-    const r = await fetch(FB+'/'+path+'.json', {signal: AbortSignal.timeout(8000)});
-    if (!r.ok) return null;
+// === FIREBASE REST ===
+async function fbGet(path){
+  try{
+    const r=await fetch(FB+'/'+path+'.json');
+    if(!r.ok)return null;
     return await r.json();
-  } catch(e) { return null; }
+  }catch(e){return null;}
 }
-async function fbSet(path, data) {
-  try {
-    const r = await fetch(FB+'/'+path+'.json', {
-      method:'PUT', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(data), signal: AbortSignal.timeout(8000)
-    });
+async function fbSet(path,data){
+  try{
+    const r=await fetch(FB+'/'+path+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     return r.ok;
-  } catch(e) { return false; }
+  }catch(e){return false;}
 }
-async function fbPush(path, data) {
-  try {
-    const r = await fetch(FB+'/'+path+'.json', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(data), signal: AbortSignal.timeout(8000)
-    });
-    if (!r.ok) return null;
-    return (await r.json()).name;
-  } catch(e) { return null; }
+async function fbPush(path,data){
+  try{
+    const r=await fetch(FB+'/'+path+'.json',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    if(!r.ok)return null;
+    return(await r.json()).name;
+  }catch(e){return null;}
 }
 
-// ─── LIKES ───
-async function loadLikes(id) {
-  const btn = document.getElementById('likeBtn');
-  const cnt = document.getElementById('likeCount');
-  if (!cnt) return;
-  cnt.textContent = '...';
-  const data = await fbGet('likes/'+id) || {};
-  const count = data.count||0, liked = uid && (data.users||{})[uid];
-  cnt.textContent = count;
-  if (btn) liked ? btn.classList.add('liked') : btn.classList.remove('liked');
+// === LIKES ===
+async function loadLikes(id){
+  const btn=document.getElementById('likeBtn');
+  const cnt=document.getElementById('likeCount');
+  if(!cnt)return;
+  cnt.textContent='...';
+  const data=await fbGet('likes/'+id)||{};
+  const count=data.count||0,liked=uid&&(data.users||{})[uid];
+  cnt.textContent=count;
+  if(btn)liked?btn.classList.add('liked'):btn.classList.remove('liked');
 }
-async function toggleLike() {
-  if (!activeScript) return;
-  const btn = document.getElementById('likeBtn');
-  const cnt = document.getElementById('likeCount');
-  const data = await fbGet('likes/'+activeScript.id) || {};
-  const users = data.users||{}, liked = !!users[uid];
-  const newCount = Math.max(0,(data.count||0)+(liked?-1:1));
-  if (liked) delete users[uid]; else users[uid]=true;
-  await fbSet('likes/'+activeScript.id, {count:newCount, users});
-  if (cnt) cnt.textContent = newCount;
-  if (btn) liked ? btn.classList.remove('liked') : btn.classList.add('liked');
+async function toggleLike(){
+  if(!activeScript)return;
+  const btn=document.getElementById('likeBtn');
+  const cnt=document.getElementById('likeCount');
+  const data=await fbGet('likes/'+activeScript.id)||{};
+  const users=data.users||{},liked=!!users[uid];
+  const newCount=Math.max(0,(data.count||0)+(liked?-1:1));
+  if(liked)delete users[uid];else users[uid]=true;
+  await fbSet('likes/'+activeScript.id,{count:newCount,users});
+  if(cnt)cnt.textContent=newCount;
+  if(btn)liked?btn.classList.remove('liked'):btn.classList.add('liked');
 }
 
-// ─── COMMENTS ───
-async function loadComments(id) {
-  const list = document.getElementById('commentList');
-  if (!list) return;
-  list.innerHTML = '<div class="comment-empty">Đang tải...</div>';
-  const data = await fbGet('comments/'+id);
-  if (!data || !Object.keys(data).length) {
-    list.innerHTML = '<div class="comment-empty">Chưa có bình luận. Hãy là người đầu tiên!</div>';
+// === COMMENTS ===
+async function loadComments(id){
+  const list=document.getElementById('commentList');
+  if(!list)return;
+  list.innerHTML='<div class="comment-empty">Đang tải...</div>';
+  const data=await fbGet('comments/'+id);
+  if(!data||!Object.keys(data).length){
+    list.innerHTML='<div class="comment-empty">Chưa có bình luận. Hãy là người đầu tiên!</div>';
     return;
   }
-  const items = Object.values(data).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,50);
-  list.innerHTML = items.map(c => {
-    const ini = (c.name||'?').slice(0,2).toUpperCase();
-    return `<div class="comment-item">
+  const items=Object.values(data).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,50);
+  list.innerHTML=items.map(c=>{
+    const ini=(c.name||'?').slice(0,2).toUpperCase();
+    return`<div class="comment-item">
       <div class="comment-header">
         <div class="comment-avatar">${ini}</div>
         <span class="comment-name">${escHtml(c.name||'Ẩn danh')}</span>
@@ -1603,225 +1585,231 @@ async function loadComments(id) {
     </div>`;
   }).join('');
 }
-async function postComment() {
-  const inp  = document.getElementById('commentInput');
-  const text = (inp&&inp.value||'').trim();
-  if (!text||!activeScript) return;
-  const name = (document.getElementById('commenterName')&&document.getElementById('commenterName').value||'').trim()||'Ẩn danh';
-  const btn  = document.querySelector('.comment-send');
-  if (btn) { btn.disabled=true; btn.textContent='...'; }
-  await fbPush('comments/'+activeScript.id, {name, text, ts:Date.now(), uid});
-  if (inp) { inp.value=''; inp.style.height='auto'; }
+async function postComment(){
+  const inp=document.getElementById('commentInput');
+  const text=(inp&&inp.value||'').trim();
+  if(!text||!activeScript)return;
+  const name=(document.getElementById('commenterName')&&document.getElementById('commenterName').value||'').trim()||'Ẩn danh';
+  const btn=document.querySelector('.comment-send');
+  if(btn){btn.disabled=true;btn.textContent='...';}
+  await fbPush('comments/'+activeScript.id,{name,text,ts:Date.now(),uid});
+  if(inp){inp.value='';inp.style.height='auto';}
   await loadComments(activeScript.id);
-  if (btn) { btn.disabled=false; btn.textContent='Gửi'; }
+  if(btn){btn.disabled=false;btn.textContent='Gửi';}
 }
 
-// ─── AUTH ───
-async function hashPw(pw) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw+'sdz_v1'));
+// === AUTH ===
+async function hashPw(pw){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw+'sdz_v1'));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-function showAuthMsg(id, msg, ok=false) {
-  const el=document.getElementById(id); if(!el) return;
-  el.textContent=msg; el.className=(ok?'auth-success show':'auth-error show');
+function showAuthMsg(id,msg,ok=false){
+  const el=document.getElementById(id);if(!el)return;
+  el.textContent=msg;el.className=(ok?'auth-success show':'auth-error show');
 }
-function clearAuthMsg(...ids) {
-  ids.forEach(id=>{ const e=document.getElementById(id); if(e){e.className=e.className.replace(' show','');e.textContent='';} });
+function clearAuthMsg(...ids){
+  ids.forEach(id=>{const e=document.getElementById(id);if(e){e.className=e.className.replace(' show','');e.textContent='';}  });
 }
-function togglePw(inputId, btn) {
-  const inp=document.getElementById(inputId); if(!inp) return;
+function togglePw(inputId,btn){
+  const inp=document.getElementById(inputId);if(!inp)return;
   inp.type=inp.type==='password'?'text':'password';
   btn.textContent=inp.type==='password'?'👁':'🙈';
 }
-function checkPwStrength(pw) {
-  const bar=document.getElementById('pw-bar'); if(!bar) return;
+function checkPwStrength(pw){
+  const bar=document.getElementById('pw-bar');if(!bar)return;
   let s=0;
-  if(pw.length>=6) s++; if(pw.length>=10) s++;
-  if(/[A-Z]/.test(pw)) s++; if(/[0-9]/.test(pw)) s++; if(/[^A-Za-z0-9]/.test(pw)) s++;
+  if(pw.length>=6)s++;if(pw.length>=10)s++;
+  if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
   bar.style.width=(s/5*100)+'%';
   bar.style.background=s<=1?'#DC2626':s<=3?'#D97706':'#059669';
 }
 let _ucT=null;
-function checkUsername(val) {
-  const el=document.getElementById('user-check'); if(!el) return;
-  if(!val||val.length<3) { el.textContent=''; return; }
-  if(!/^[a-zA-Z0-9_]{3,20}$/.test(val)) { el.textContent='✗ 3-20 ký tự, chỉ a-z 0-9 _'; el.style.color='var(--red)'; return; }
-  el.textContent='Đang kiểm tra...'; el.style.color='var(--text-muted)';
+function checkUsername(val){
+  const el=document.getElementById('user-check');if(!el)return;
+  if(!val||val.length<3){el.textContent='';return;}
+  if(!/^[a-zA-Z0-9_]{3,20}$/.test(val)){el.textContent='✗ 3-20 ký tự, chỉ a-z 0-9 _';el.style.color='var(--red)';return;}
+  el.textContent='Đang kiểm tra...';el.style.color='var(--text-muted)';
   clearTimeout(_ucT);
   _ucT=setTimeout(async()=>{
     const d=await fbGet('users/'+val.toLowerCase());
-    if(d&&d.username){ el.textContent='✗ Tên đã dùng'; el.style.color='var(--red)'; }
-    else { el.textContent='✓ Tên có thể dùng'; el.style.color='var(--green)'; }
+    if(d&&d.username){el.textContent='✗ Tên đã dùng';el.style.color='var(--red)';}
+    else{el.textContent='✓ Tên có thể dùng';el.style.color='var(--green)';}
   },500);
 }
-async function doRegister() {
+async function doRegister(){
   clearAuthMsg('reg-err','reg-ok');
   const username=(document.getElementById('reg-user').value||'').trim().toLowerCase();
   const email=(document.getElementById('reg-email').value||'').trim().toLowerCase();
   const pw=(document.getElementById('reg-pass').value||'');
-  if(!username||!email||!pw) return showAuthMsg('reg-err','Vui lòng điền đầy đủ.');
-  if(!/^[a-zA-Z0-9_]{3,20}$/.test(username)) return showAuthMsg('reg-err','Tên 3-20 ký tự, chỉ a-z 0-9 _');
-  if(pw.length<6) return showAuthMsg('reg-err','Mật khẩu tối thiểu 6 ký tự.');
-  if(!email.includes('@')) return showAuthMsg('reg-err','Email không hợp lệ.');
+  if(!username||!email||!pw)return showAuthMsg('reg-err','Vui lòng điền đầy đủ.');
+  if(!/^[a-zA-Z0-9_]{3,20}$/.test(username))return showAuthMsg('reg-err','Tên 3-20 ký tự, chỉ a-z 0-9 _');
+  if(pw.length<6)return showAuthMsg('reg-err','Mật khẩu tối thiểu 6 ký tự.');
+  if(!email.includes('@'))return showAuthMsg('reg-err','Email không hợp lệ.');
   const ex=await fbGet('users/'+username);
-  if(ex&&ex.username) return showAuthMsg('reg-err','Tên đăng nhập đã tồn tại.');
+  if(ex&&ex.username)return showAuthMsg('reg-err','Tên đăng nhập đã tồn tại.');
   const pwHash=await hashPw(pw);
   const initials=username.slice(0,2).toUpperCase();
   const ok=await fbSet('users/'+username,{username,email,pwHash,joined:Date.now(),avatar:initials,scripts:0});
-  if(!ok) return showAuthMsg('reg-err','Lỗi kết nối Firebase. Thử lại.');
+  if(!ok)return showAuthMsg('reg-err','Lỗi kết nối Firebase. Thử lại.');
   const session={username,avatar:initials,joined:Date.now()};
   try{localStorage.setItem('sdz_session',JSON.stringify(session));}catch(e){}
-  currentUser=session; updateNavUser();
+  currentUser=session;updateNavUser();
   showAuthMsg('reg-ok','Đăng ký thành công! Chào '+username+' 👋',true);
   setTimeout(()=>go('home'),1200);
 }
-async function doLogin() {
+async function doLogin(){
   clearAuthMsg('login-err','login-ok');
   const input=(document.getElementById('li-user').value||'').trim().toLowerCase();
   const pw=(document.getElementById('li-pass').value||'');
-  if(!input||!pw) return showAuthMsg('login-err','Điền đầy đủ thông tin.');
+  if(!input||!pw)return showAuthMsg('login-err','Điền đầy đủ thông tin.');
   const userData=await fbGet('users/'+input);
-  if(!userData||!userData.pwHash) return showAuthMsg('login-err','Sai tên hoặc mật khẩu.');
+  if(!userData||!userData.pwHash)return showAuthMsg('login-err','Sai tên hoặc mật khẩu.');
   const pwHash=await hashPw(pw);
-  if(userData.pwHash!==pwHash) return showAuthMsg('login-err','Sai tên hoặc mật khẩu.');
+  if(userData.pwHash!==pwHash)return showAuthMsg('login-err','Sai tên hoặc mật khẩu.');
   const session={username:userData.username,avatar:userData.avatar||userData.username.slice(0,2).toUpperCase(),joined:userData.joined};
   try{localStorage.setItem('sdz_session',JSON.stringify(session));}catch(e){}
-  currentUser=session; updateNavUser();
+  currentUser=session;updateNavUser();
   showAuthMsg('login-ok','Đăng nhập thành công! 👋',true);
   setTimeout(()=>go('home'),1000);
 }
-function doLogout() {
+function doLogout(){
   try{localStorage.removeItem('sdz_session');}catch(e){}
-  currentUser=null; updateNavUser(); go('home');
+  currentUser=null;updateNavUser();go('home');
 }
-function updateNavUser() {
+function updateNavUser(){
   const g=document.getElementById('navGuest');
   const u=document.getElementById('navUser');
-  if(!g||!u) return;
-  if(currentUser) {
-    g.style.display='none'; u.style.display='flex';
-    const av=document.getElementById('navAvatar'); if(av) av.textContent=currentUser.avatar;
-    const un=document.getElementById('navUsername'); if(un) un.textContent=currentUser.username;
-  } else { g.style.display='flex'; u.style.display='none'; }
+  if(!g||!u)return;
+  if(currentUser){
+    g.style.display='none';u.style.display='flex';
+    const av=document.getElementById('navAvatar');if(av)av.textContent=currentUser.avatar;
+    const un=document.getElementById('navUsername');if(un)un.textContent=currentUser.username;
+  }else{g.style.display='flex';u.style.display='none';}
 }
-function loadSession() {
-  try{ const s=localStorage.getItem('sdz_session'); if(s){currentUser=JSON.parse(s);updateNavUser();} }catch(e){}
+function loadSession(){
+  try{const s=localStorage.getItem('sdz_session');if(s){currentUser=JSON.parse(s);updateNavUser();}}catch(e){}
 }
 
-// ─── ROUTING ───
-function go(page) {
+// === ROUTING ===
+function go(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const pg=document.getElementById('page-'+page);
-  if(pg) pg.classList.add('active');
+  if(pg)pg.classList.add('active');
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-  // nav: [0]=upload [1]=trending [2]=keyless [3]=executors
   const map={upload:0,executors:3};
   const links=document.querySelectorAll('.nav-link');
-  if(map[page]!==undefined && links[map[page]]) links[map[page]].classList.add('active');
+  if(map[page]!==undefined&&links[map[page]])links[map[page]].classList.add('active');
   currentPage=page;
   window.scrollTo(0,0);
-  if(page==='executors') renderExecutors();
-  // close mobile menu
+  if(page==='executors')renderExecutors();
   const mm=document.getElementById('mobileMenu');
-  if(mm) mm.classList.remove('open');
+  if(mm)mm.classList.remove('open');
 }
-function goFilter(f) {
-  go('home');
-  filterType=f;
+function goFilter(f){
+  go('home');filterType=f;
   document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
   renderScripts();
 }
 
-// ─── FILTER ───
-function getFiltered() {
+// === FILTER ===
+function getFiltered(){
   let list=[...SCRIPTS];
-  if(currentGame) {
-    if(currentGame==='AutoFarm') list=list.filter(s=>(s.tags||[]).includes('AutoFarm'));
-    else if(currentGame==='ESP') list=list.filter(s=>(s.tags||[]).includes('ESP'));
+  if(currentGame){
+    if(currentGame==='AutoFarm')list=list.filter(s=>(s.tags||[]).includes('AutoFarm'));
+    else if(currentGame==='ESP')list=list.filter(s=>(s.tags||[]).includes('ESP'));
     else list=list.filter(s=>s.game.toLowerCase().includes(currentGame.toLowerCase()));
   }
-  if(currentExec) list=list.filter(s=>(s.exec||[]).includes(currentExec));
-  if(filterType==='free'||filterType==='paid'||filterType==='key') list=list.filter(s=>s.type===filterType);
-  else if(filterType==='keyless') list=list.filter(s=>s.type==='keyless'||s.type==='free');
-  else if(filterType==='trending') list=list.sort((a,b)=>b.views-a.views).slice(0,8);
-  else if(filterType==='new') list=list.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(currentExec)list=list.filter(s=>(s.exec||[]).includes(currentExec));
+  if(filterType==='free'||filterType==='paid'||filterType==='key')list=list.filter(s=>s.type===filterType);
+  else if(filterType==='keyless')list=list.filter(s=>s.type==='keyless'||s.type==='free');
+  else if(filterType==='trending')list=[...list].sort((a,b)=>b.views-a.views).slice(0,8);
+  else if(filterType==='new')list=[...list].sort((a,b)=>new Date(b.date)-new Date(a.date));
   return list;
 }
-function setFilter(btn,type) {
+function setFilter(btn,type){
   document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
   btn.classList.add('active');
-  filterType=type; currentGame=null;
+  filterType=type;currentGame=null;
   renderScripts();
 }
-function filterGame(btn,game) {
+function filterGame(btn,game){
   document.querySelectorAll('.sidebar .filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   currentGame=(currentGame===game)?null:game;
   renderScripts();
 }
-function filterExec(exec) {
+function filterExec(exec){
   currentExec=(currentExec===exec)?null:exec;
   renderScripts();
 }
-function setPill(el,game) {
+function setPill(el,game){
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   currentGame=(game==='all')?null:game;
   filterType='all';
   renderScripts();
 }
-function handleSearch(v) {
-  searchQuery=v;
-  renderScripts();
-}
+function handleSearch(v){searchQuery=v;renderScripts();}
 
-// ─── RENDER SCRIPTS ───
-function tokenize(str) {
-  return str.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).filter(Boolean);
+// === RENDER SCRIPTS ===
+function tokenize(str){
+  return str.toLowerCase().replace(/[^a-z0-9 ]/g,'').split(' ').filter(Boolean);
 }
-function scoreScript(s,tokens) {
+function scoreScript(s,tokens){
   const h=[s.title,s.author,s.game,s.desc,...(s.tags||[]),...(s.exec||[])].join(' ').toLowerCase();
   let sc=0;
-  for(const t of tokens) {
-    if(h.includes(t)) {
-      if(s.title.toLowerCase().includes(t)) sc+=10;
-      else if(s.game.toLowerCase().includes(t)) sc+=5;
+  for(const t of tokens){
+    if(h.includes(t)){
+      if(s.title.toLowerCase().includes(t))sc+=10;
+      else if(s.game.toLowerCase().includes(t))sc+=5;
       else sc+=1;
     }
   }
   return sc;
 }
-function hlText(text,tokens) {
-  if(!tokens.length) return escHtml(text);
+function hlText(text,tokens){
+  if(!tokens.length)return escHtml(text);
   let out=escHtml(text);
-  for(const t of tokens) {
-    const re=new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
-    out=out.replace(re,'<span class="hl-match">$1</span>');
+  for(let ti=0;ti<tokens.length;ti++){
+    var t=tokens[ti];
+    var safe='';
+    for(var ci=0;ci<t.length;ci++){
+      var ch=t[ci];
+      if('.*+?^${}()|[]\\'.indexOf(ch)>=0)safe+='\\'+ch;
+      else safe+=ch;
+    }
+    var r=new RegExp('('+safe+')','gi');
+    out=out.replace(r,'<span class="hl-match">$1</span>');
   }
   return out;
 }
-function renderScripts() {
+function renderScripts(){
   const info=document.getElementById('searchInfo');
   const grid=document.getElementById('scriptGrid');
-  if(!grid) return;
+  if(!grid)return;
   let list=getFiltered();
   const tokens=searchQuery?tokenize(searchQuery):[];
-  if(searchQuery&&tokens.length) {
-    list=list.map(s=>({s,score:scoreScript(s,tokens)}))
-             .filter(x=>x.score>0)
-             .sort((a,b)=>b.score-a.score)
-             .map(x=>x.s);
-    if(info) info.textContent=list.length+' kết quả cho "'+searchQuery+'"';
-  } else { if(info) info.textContent=''; }
-  if(!list.length) {
+  if(searchQuery&&tokens.length){
+    const scored=[];
+    for(let i=0;i<list.length;i++){
+      const sc=scoreScript(list[i],tokens);
+      if(sc>0)scored.push({s:list[i],sc});
+    }
+    scored.sort((a,b)=>b.sc-a.sc);
+    list=scored.map(x=>x.s);
+    if(info)info.textContent=list.length+' kết quả cho "'+searchQuery+'"';
+  }else{if(info)info.textContent='';}
+  if(!list.length){
     grid.innerHTML='<div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--text-muted)">Không tìm thấy script nào.</div>';
     return;
   }
-  grid.innerHTML=list.map((s,i)=>{
+  const parts=[];
+  for(let i=0;i<list.length;i++){
+    const s=list[i];
     const titleHtml=tokens.length?hlText(s.title,tokens):escHtml(s.title);
-    return `<div class="scard" onclick="openDetail(${s.id})">
+    parts.push(`<div class="scard" onclick="openDetail(${s.id})">
   <div class="scard-top">
-    ${filterType==='trending'?`<div class="trending-num">${String(i+1).padStart(2,'0')}</div>`:''}
+    ${filterType==='trending'?'<div class="trending-num">'+String(i+1).padStart(2,'0')+'</div>':''}
     <div class="scard-icon">${s.icon}</div>
     <div class="scard-info">
       <div class="scard-title">${titleHtml}</div>
@@ -1831,7 +1819,7 @@ function renderScripts() {
   <div class="scard-badges">
     ${typeBadge(s.type)}
     <span class="badge b-game">${escHtml(s.game)}</span>
-    ${(s.exec||[]).slice(0,2).map(e=>`<span class="badge b-game">${escHtml(e)}</span>`).join('')}
+    ${(s.exec||[]).slice(0,2).map(e=>'<span class="badge b-game">'+escHtml(e)+'</span>').join('')}
   </div>
   <div class="code-preview">
     <div class="code-topbar">
@@ -1846,13 +1834,14 @@ function renderScripts() {
     <span class="foot-stat">★ ${s.rating}</span>
     <span class="scard-action">Xem script</span>
   </div>
-</div>`;
-  }).join('');
+</div>`);
+  }
+  grid.innerHTML=parts.join('');
 }
 
-// ─── DETAIL MODAL ───
-function openDetail(id) {
-  const s=SCRIPTS.find(x=>x.id===id); if(!s) return;
+// === DETAIL MODAL ===
+function openDetail(id){
+  const s=SCRIPTS.find(x=>x.id===id);if(!s)return;
   activeScript=s;
   document.getElementById('d-icon').textContent=s.icon;
   document.getElementById('d-title').textContent=s.title;
@@ -1860,105 +1849,104 @@ function openDetail(id) {
   document.getElementById('d-desc').textContent=s.desc;
   document.getElementById('d-game').textContent=s.game;
   document.getElementById('d-code').innerHTML=hl(s.code);
-  document.getElementById('d-meta').innerHTML=`
-    <span>⬇ ${s.dl.toLocaleString()} lượt tải</span>
-    <span>👁 ${s.views.toLocaleString()} lượt xem</span>
-    <span>★ ${s.rating}/5.0</span>
-    <span>📅 ${s.date}</span>
-    <span>Executor: ${(s.exec||[]).join(', ')}</span>`;
+  document.getElementById('d-meta').innerHTML=
+    '<span>⬇ '+s.dl.toLocaleString()+' lượt tải</span>'+
+    '<span>👁 '+s.views.toLocaleString()+' lượt xem</span>'+
+    '<span>★ '+s.rating+'/5.0</span>'+
+    '<span>📅 '+s.date+'</span>'+
+    '<span>Executor: '+(s.exec||[]).join(', ')+'</span>';
   const ov=document.getElementById('detailOverlay');
-  if(ov) ov.classList.add('open');
+  if(ov)ov.classList.add('open');
   const ci=document.getElementById('commentInput');
   if(ci){ci.value='';ci.style.height='auto';}
   loadLikes(s.id);
   loadComments(s.id);
 }
-function closeOverlay(e) {
+function closeOverlay(e){
   if(e.target===document.getElementById('detailOverlay'))
     document.getElementById('detailOverlay').classList.remove('open');
 }
-function doCopy() {
-  if(!activeScript) return;
+function doCopy(){
+  if(!activeScript)return;
   navigator.clipboard.writeText(activeScript.code).then(()=>{
     const btn=document.querySelector('.copy-btn');
     if(btn){btn.textContent='Copied!';btn.style.color='var(--green)';setTimeout(()=>{btn.textContent='Copy';btn.style.color=''},1600);}
   }).catch(()=>{});
 }
-function doDownload() {
-  if(!activeScript) return;
+function doDownload(){
+  if(!activeScript)return;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([activeScript.code],{type:'text/plain'}));
   a.download=activeScript.title.replace(/\s+/g,'_')+'.lua';
   a.click();
 }
 
-// ─── UPLOAD ───
-function toggleTag(btn) { btn.classList.toggle('sel'); }
-function submitScript() {
+// === UPLOAD ===
+function toggleTag(btn){btn.classList.toggle('sel');}
+function submitScript(){
   const title=(document.getElementById('up-title').value||'').trim();
   const code=(document.getElementById('up-code').value||'').trim();
-  if(!title||!code) { alert('Điền tên và code.'); return; }
+  if(!title||!code){alert('Điền tên và code.');return;}
   const newS={
-    id:SCRIPTS.length+1, title,
+    id:SCRIPTS.length+1,title,
     author:document.getElementById('up-author').value||'anonymous',
-    verified:false,
-    game:document.getElementById('up-game').value,
-    tags:[],
-    type:document.getElementById('up-type').value,
+    verified:false,game:document.getElementById('up-game').value,
+    tags:[],type:document.getElementById('up-type').value,
     exec:Array.from(document.querySelectorAll('.form-tag.sel')).map(t=>t.textContent),
-    dl:0, rating:5.0, views:0,
-    date:new Date().toISOString().slice(0,10),
-    icon:'📄',
-    desc:document.getElementById('up-desc').value||'Script mới.',
-    code,
+    dl:0,rating:5.0,views:0,date:new Date().toISOString().slice(0,10),
+    icon:'📄',desc:document.getElementById('up-desc').value||'Script mới.',code,
   };
   SCRIPTS.unshift(newS);
-  go('home'); filterType='new'; renderScripts();
+  go('home');filterType='new';renderScripts();
 }
 
-// ─── EXECUTORS ───
-function setPlatform(btn,plat) {
+// === EXECUTORS ===
+function setPlatform(btn,plat){
   document.querySelectorAll('.plat-tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  platformFilter=plat; renderExecutors();
+  platformFilter=plat;renderExecutors();
 }
-function renderExecutors() {
+function renderExecutors(){
   const onlineOnly=document.getElementById('onlineOnly')&&document.getElementById('onlineOnly').checked;
   let list=[...EXECUTORS];
-  if(platformFilter!=='all') list=list.filter(e=>e.platform.includes(platformFilter));
-  if(onlineOnly) list=list.filter(e=>e.status==='online');
+  if(platformFilter!=='all')list=list.filter(e=>e.platform.includes(platformFilter));
+  if(onlineOnly)list=list.filter(e=>e.status==='online');
   const online=list.filter(e=>e.status==='online').length;
   const oc=document.getElementById('execOnlineCount');
-  if(oc) oc.textContent=online+'/'+list.length+' online';
+  if(oc)oc.textContent=online+'/'+list.length+' online';
   const statusEl={
     online:'<span class="exec-status status-on">● Online</span>',
     partial:'<span class="exec-status status-partial">◑ Partial</span>',
     offline:'<span class="exec-status status-off">○ Offline</span>'
   };
-  const g=document.getElementById('execGrid'); if(!g) return;
-  g.innerHTML=list.map(e=>`
-<div class="exec-card">
-  <div class="exec-top">
-    <div class="exec-icon">${e.icon}</div>
-    <div><div class="exec-name">${e.name}</div><div class="exec-plat">${e.platform.join(' · ')} · ${e.free?'Free':'Paid'}</div></div>
-  </div>
-  ${statusEl[e.status]||''}
-  <div class="exec-features">${(e.features||[]).map(f=>`<span class="exec-feat">${f}</span>`).join('')}</div>
-  <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.5">${e.desc||''}</div>
-  <div class="exec-level">
-    <span>Level ${e.level}</span>
-    <div class="level-bar"><div class="level-fill" style="width:${e.level/7*100}%"></div></div>
-    <span>${e.level}/7</span>
-  </div>
-</div>`).join('');
+  const g=document.getElementById('execGrid');if(!g)return;
+  const parts=[];
+  for(const e of list){
+    parts.push('<div class="exec-card">'+
+      '<div class="exec-top">'+
+        '<div class="exec-icon">'+e.icon+'</div>'+
+        '<div><div class="exec-name">'+e.name+'</div>'+
+        '<div class="exec-plat">'+e.platform.join(' · ')+' · '+(e.free?'Free':'Paid')+'</div></div>'+
+      '</div>'+
+      (statusEl[e.status]||'')+
+      '<div class="exec-features">'+(e.features||[]).map(f=>'<span class="exec-feat">'+f+'</span>').join('')+'</div>'+
+      '<div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.5">'+(e.desc||'')+'</div>'+
+      '<div class="exec-level">'+
+        '<span>Level '+e.level+'</span>'+
+        '<div class="level-bar"><div class="level-fill" style="width:'+(e.level/7*100)+'%"></div></div>'+
+        '<span>'+e.level+'/7</span>'+
+      '</div>'+
+    '</div>');
+  }
+  g.innerHTML=parts.join('');
 }
 
-// ─── THEME ───
-function toggleTheme() {
+// === THEME ===
+function toggleTheme(){
   dark=!dark;
   const btn=document.getElementById('themeBtn');
-  if(btn) btn.textContent=dark?'☀️':'🌙';
-  if(dark) {
+  if(btn)btn.textContent=dark?'☀️':'🌙';
+  if(dark){
     document.documentElement.style.setProperty('--bg','#080810');
     document.documentElement.style.setProperty('--bg2','#0E0E1A');
     document.documentElement.style.setProperty('--surface','#13131F');
@@ -1973,40 +1961,50 @@ function toggleTheme() {
     document.documentElement.style.setProperty('--yellow','#FBBF24');
     document.documentElement.style.setProperty('--red','#F87171');
     document.documentElement.style.setProperty('--blue','#60A5FA');
-  } else {
+  }else{
     ['--bg','--bg2','--surface','--surface2','--surface3','--border','--border2',
      '--text','--text-dim','--text-muted','--green','--yellow','--red','--blue']
       .forEach(v=>document.documentElement.style.removeProperty(v));
   }
 }
 
-// ─── MOBILE MENU ───
-function toggleMenu() {
-  document.getElementById('mobileMenu').classList.toggle('open');
+// === MOBILE MENU ===
+function toggleMenu(){
+  const mm=document.getElementById('mobileMenu');
+  if(mm)mm.classList.toggle('open');
 }
 
-// ─── FIREBASE INIT (non-blocking) ───
-async function initDB() {
+// === FIREBASE INIT ===
+async function initDB(){
   uid=getUid();
-  try {
+  try{
     const r=await fetch(FB+'/ping.json',{
-      method:'PUT', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ts:Date.now()}),
-      signal:AbortSignal.timeout(5000)
+      method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ts:Date.now()})
     });
     const w=document.getElementById('db-warning');
-    if(r.ok) { if(w) w.style.display='none'; }
-    else { if(w) w.style.display='flex'; }
-  } catch(e) {
-    // Network error — site still works for browsing
-    console.warn('[SHADOWDZ] Firebase:', e.message);
-  }
+    if(r.ok){if(w)w.style.display='none';}
+    else{if(w)w.style.display='flex';}
+  }catch(e){console.warn('[SHADOWDZ] Firebase:',e.message);}
 }
 
-// ─── INIT ───
+// === INIT — chạy ngay, không await ===
+uid = getUid();
 loadSession();
 renderScripts();
-initDB(); // non-blocking — no await
+initDB();
+
+// Expose tất cả functions ra window để onclick HTML có thể gọi
+// (cần thiết khi script chạy trong strict mode hoặc module context)
+window.go=go;window.goFilter=goFilter;window.handleSearch=handleSearch;
+window.setFilter=setFilter;window.filterGame=filterGame;window.filterExec=filterExec;
+window.setPill=setPill;window.setPlatform=setPlatform;window.renderExecutors=renderExecutors;
+window.openDetail=openDetail;window.closeOverlay=closeOverlay;
+window.doCopy=doCopy;window.doDownload=doDownload;window.submitScript=submitScript;
+window.toggleLike=toggleLike;window.postComment=postComment;
+window.toggleTag=toggleTag;window.toggleMenu=toggleMenu;window.toggleTheme=toggleTheme;
+window.togglePw=togglePw;window.checkUsername=checkUsername;window.checkPwStrength=checkPwStrength;
+window.doLogin=doLogin;window.doRegister=doRegister;window.doLogout=doLogout;
 
 </script>
 
